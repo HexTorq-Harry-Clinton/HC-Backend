@@ -1,0 +1,103 @@
+{
+  "meta": {
+    "format": "httpie",
+    "version": "1.0.0",
+    "contentType": "collection",
+    "schema": "https://schema.httpie.io/1.0.0.json"
+  },
+  "entry": {
+    "name": "Product Rating Summary",
+    "auth": { "type": "none" },
+    "requests": [
+      {
+        "name": "GET ALL",
+        "url": "{{P}}/product-rating-summary",
+        "method": "GET",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "none",
+          "file": { "name": "" },
+          "text": { "value": "", "format": "application/json" },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "GET BY ID",
+        "url": "{{P}}/product-rating-summary/prod_001",
+        "method": "GET",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "none",
+          "file": { "name": "" },
+          "text": { "value": "", "format": "application/json" },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "POST",
+        "url": "{{P}}/product-rating-summary",
+        "method": "POST",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"product_id\": \"prod_001\",\n  \"avg_rating\": 4.5,\n  \"total_reviews\": 10,\n  \"rating_5_count\": 7,\n  \"rating_4_count\": 2,\n  \"rating_3_count\": 1,\n  \"rcu\": \"admin\"\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "PUT",
+        "url": "{{P}}/product-rating-summary",
+        "method": "PUT",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"product_id\": \"prod_001\",\n  \"avg_rating\": 4.6,\n  \"total_reviews\": 12,\n  \"luu\": \"admin\"\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "DELETE",
+        "url": "{{P}}/product-rating-summary",
+        "method": "DELETE",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"product_id\": \"prod_001\"\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,1363 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["partialIndexes"]
+}
+
+datasource db {
+  provider = "sqlserver"
+}
+
+model tbl_addresses {
+  address_id    String    @id(map: "pk_tbl_addresses") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_addre__addre__22401542") @db.VarChar(36)
+  user_id       String    @db.VarChar(36)
+  full_name     String    @db.VarChar(255)
+  mobile_number String    @db.VarChar(50)
+  house_street  String    @db.VarChar(500)
+  city          String    @db.VarChar(150)
+  state         String    @db.VarChar(150)
+  pincode       String    @db.VarChar(20)
+  landmark      String?   @db.VarChar(255)
+  isdefault     Boolean   @default(false, map: "DF__tbl_addre__isdef__2334397B")
+  isactive      Boolean   @default(true, map: "DF__tbl_addre__isact__24285DB4")
+  isdeleted     Boolean   @default(false, map: "DF__tbl_addre__isdel__251C81ED")
+  rcu           String?   @db.VarChar(100)
+  rcm           DateTime  @default(now(), map: "DF__tbl_address__rcm__2610A626") @db.DateTime
+  luu           String?   @db.VarChar(100)
+  lcm           DateTime? @db.DateTime
+
+  @@index([user_id, isdefault], map: "ix_tbl_addresses_user", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_appointment_date_slots {
+  appointment_date_slot_id    String                        @id(map: "PK_tbl_appointment_date_slots") @default(dbgenerated("newid()"), map: "DF__tbl_appoi__appoi__625A9A57") @db.UniqueIdentifier
+  slot_date                   DateTime                      @unique(map: "UX_tbl_appointment_date_slots_slot_date", where: raw("([isdeleted]=(0))")) @db.Date
+  slot_duration_minutes       Int                           @default(30, map: "DF_tbl_appointment_date_slots_duration")
+  isavailable                 Boolean                       @default(true, map: "DF_tbl_appointment_date_slots_isavailable")
+  notes                       String?                       @db.VarChar(500)
+  isactive                    Boolean                       @default(true, map: "DF_tbl_appointment_date_slots_isactive")
+  isdeleted                   Boolean                       @default(false, map: "DF_tbl_appointment_date_slots_isdeleted")
+  rcu                         String?                       @db.VarChar(100)
+  rcm                         DateTime                      @default(now(), map: "DF_tbl_appointment_date_slots_rcm") @db.DateTime
+  luu                         String?                       @db.VarChar(100)
+  lcm                         DateTime?                     @db.DateTime
+  tbl_appointment_slot_blocks tbl_appointment_slot_blocks[]
+  tbl_appointment_time_slots  tbl_appointment_time_slots[]
+  tbl_custom_appointments     tbl_custom_appointments[]
+}
+
+model tbl_appointment_slot_blocks {
+  appointment_slot_block_id  String                     @id(map: "PK_tbl_appointment_slot_blocks") @default(dbgenerated("newid()"), map: "DF__tbl_appoi__appoi__01D345B0") @db.UniqueIdentifier
+  appointment_date_slot_id   String                     @db.UniqueIdentifier
+  block_start_time           DateTime                   @db.Time
+  block_end_time             DateTime                   @db.Time
+  block_reason               String?                    @db.VarChar(255)
+  blocked_by                 String?                    @db.VarChar(100)
+  isactive                   Boolean                    @default(true, map: "DF_tbl_appointment_slot_blocks_isactive")
+  isdeleted                  Boolean                    @default(false, map: "DF_tbl_appointment_slot_blocks_isdeleted")
+  rcu                        String?                    @db.VarChar(100)
+  rcm                        DateTime                   @default(now(), map: "DF_tbl_appointment_slot_blocks_rcm") @db.DateTime
+  luu                        String?                    @db.VarChar(100)
+  lcm                        DateTime?                  @db.DateTime
+  tbl_appointment_date_slots tbl_appointment_date_slots @relation(fields: [appointment_date_slot_id], references: [appointment_date_slot_id], onUpdate: NoAction, map: "FK_slot_blocks_date_slots")
+
+  @@index([appointment_date_slot_id, isdeleted], map: "IX_tbl_appointment_slot_blocks_date")
+}
+
+model tbl_appointment_time_slots {
+  appointment_time_slot_id                                                                             String                     @id(map: "PK_tbl_appointment_time_slots") @default(dbgenerated("newid()"), map: "DF__tbl_appoi__appoi__76619304") @db.UniqueIdentifier
+  appointment_date_slot_id                                                                             String                     @db.UniqueIdentifier
+  slot_start_time                                                                                      DateTime                   @db.Time
+  slot_end_time                                                                                        DateTime                   @db.Time
+  isavailable                                                                                          Boolean                    @default(true, map: "DF_tbl_appointment_time_slots_isavailable")
+  isbooked                                                                                             Boolean                    @default(false, map: "DF_tbl_appointment_time_slots_isbooked")
+  booked_at                                                                                            DateTime?                  @db.DateTime
+  appointment_id                                                                                       String?                    @db.UniqueIdentifier
+  notes                                                                                                String?                    @db.VarChar(500)
+  display_order                                                                                        Int                        @default(1, map: "DF_tbl_appointment_time_slots_display_order")
+  isactive                                                                                             Boolean                    @default(true, map: "DF_tbl_appointment_time_slots_isactive")
+  isdeleted                                                                                            Boolean                    @default(false, map: "DF_tbl_appointment_time_slots_isdeleted")
+  rcu                                                                                                  String?                    @db.VarChar(100)
+  rcm                                                                                                  DateTime                   @default(now(), map: "DF_tbl_appointment_time_slots_rcm") @db.DateTime
+  luu                                                                                                  String?                    @db.VarChar(100)
+  lcm                                                                                                  DateTime?                  @db.DateTime
+  tbl_custom_appointments_tbl_appointment_time_slots_appointment_idTotbl_custom_appointments           tbl_custom_appointments?   @relation("tbl_appointment_time_slots_appointment_idTotbl_custom_appointments", fields: [appointment_id], references: [appointment_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_time_slots_appointments")
+  tbl_appointment_date_slots                                                                           tbl_appointment_date_slots @relation(fields: [appointment_date_slot_id], references: [appointment_date_slot_id], onUpdate: NoAction, map: "FK_time_slots_date_slots")
+  tbl_custom_appointments_tbl_custom_appointments_appointment_time_slot_idTotbl_appointment_time_slots tbl_custom_appointments?   @relation("tbl_custom_appointments_appointment_time_slot_idTotbl_appointment_time_slots")
+
+  @@unique([appointment_date_slot_id, slot_start_time, slot_end_time], map: "UX_tbl_appointment_time_slots_unique", where: raw("([isdeleted]=(0))"))
+  @@index([appointment_date_slot_id, isavailable, isbooked, isdeleted], map: "IX_tbl_appointment_time_slots_date_fetch")
+}
+
+model tbl_attributes {
+  attribute_id                 String                         @id(map: "pk_tbl_attributes") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_attri__attri__65F62111") @db.VarChar(36)
+  attribute_name               String                         @db.VarChar(255)
+  attribute_slug               String                         @unique(map: "ux_tbl_attributes_slug", where: raw("([isdeleted]=(0))")) @db.VarChar(255)
+  attribute_type               String                         @db.VarChar(50)
+  display_order                Int                            @default(1, map: "DF__tbl_attri__displ__66EA454A")
+  isactive                     Boolean                        @default(true, map: "DF__tbl_attri__isact__67DE6983")
+  isdeleted                    Boolean                        @default(false, map: "DF__tbl_attri__isdel__68D28DBC")
+  rcu                          String?                        @db.VarChar(100)
+  rcm                          DateTime                       @default(now(), map: "DF__tbl_attribu__rcm__69C6B1F5") @db.DateTime
+  luu                          String?                        @db.VarChar(100)
+  lcm                          DateTime?                      @db.DateTime
+  tbl_product_attribute_values tbl_product_attribute_values[]
+
+  @@index([isactive, isdeleted, display_order], map: "ix_tbl_attributes_active_order")
+}
+
+model tbl_care_instructions {
+  care_instruction_id              String                             @id(map: "pk_tbl_care_instructions") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_care___care___42ACE4D4") @db.VarChar(36)
+  instruction_text                 String                             @db.VarChar(Max)
+  display_order                    Int                                @default(1, map: "DF__tbl_care___displ__43A1090D")
+  isactive                         Boolean                            @default(true, map: "DF__tbl_care___isact__44952D46")
+  isdeleted                        Boolean                            @default(false, map: "DF__tbl_care___isdel__4589517F")
+  rcu                              String?                            @db.VarChar(100)
+  rcm                              DateTime                           @default(now(), map: "DF__tbl_care_in__rcm__467D75B8") @db.DateTime
+  luu                              String?                            @db.VarChar(100)
+  lcm                              DateTime?                          @db.DateTime
+  tbl_cloth_type_care_instructions tbl_cloth_type_care_instructions[]
+
+  @@index([isactive, isdeleted, display_order], map: "ix_tbl_care_instructions_active_order")
+}
+
+model tbl_cart_items {
+  cart_item_id         String                @id(map: "PK__tbl_cart__5D9A6C6E7AD4DA40") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_cart___cart___27C3E46E") @db.VarChar(36)
+  cart_id              String                @db.VarChar(36)
+  product_id           String                @db.VarChar(36)
+  product_variant_id   String?               @db.VarChar(36)
+  qty                  Int                   @default(1, map: "DF__tbl_cart_it__qty__28B808A7")
+  unit_price           Decimal?              @db.Decimal(18, 2)
+  total_price          Decimal?              @db.Decimal(18, 2)
+  added_at             DateTime              @default(now(), map: "DF__tbl_cart___added__29AC2CE0") @db.DateTime
+  isactive             Boolean               @default(true, map: "DF__tbl_cart___isact__2AA05119")
+  isdeleted            Boolean               @default(false, map: "DF__tbl_cart___isdel__2B947552")
+  rcu                  String?               @db.VarChar(100)
+  rcm                  DateTime              @default(now(), map: "DF__tbl_cart_it__rcm__2C88998B") @db.DateTime
+  luu                  String?               @db.VarChar(100)
+  lcm                  DateTime?             @db.DateTime
+  tbl_carts            tbl_carts             @relation(fields: [cart_id], references: [cart_id], onUpdate: NoAction, map: "fk_tbl_cart_items_cart")
+  tbl_products         tbl_products          @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_cart_items_product")
+  tbl_product_variants tbl_product_variants? @relation(fields: [product_variant_id], references: [product_variant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_cart_items_variant")
+
+  @@unique([cart_id, product_id, product_variant_id], map: "ux_tbl_cart_items_unique", where: raw("([isdeleted]=(0))"))
+  @@index([cart_id], map: "ix_tbl_cart_items_cart", where: raw("([isdeleted]=(0))"))
+  @@index([product_id], map: "ix_tbl_cart_items_product", where: raw("([isdeleted]=(0))"))
+  @@index([product_variant_id], map: "ix_tbl_cart_items_variant", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_carts {
+  cart_id        String           @id(map: "PK__tbl_cart__2EF52A27F0DAE529") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_carts__cart___1F2E9E6D") @db.VarChar(36)
+  user_id        String           @db.VarChar(36)
+  cart_status    String           @default("active", map: "DF__tbl_carts__cart___2022C2A6") @db.VarChar(20)
+  isactive       Boolean          @default(true, map: "DF__tbl_carts__isact__2116E6DF")
+  isdeleted      Boolean          @default(false, map: "DF__tbl_carts__isdel__220B0B18")
+  rcu            String?          @db.VarChar(100)
+  rcm            DateTime         @default(now(), map: "DF__tbl_carts__rcm__22FF2F51") @db.DateTime
+  luu            String?          @db.VarChar(100)
+  lcm            DateTime?        @db.DateTime
+  tbl_cart_items tbl_cart_items[]
+  tbl_orders     tbl_orders[]
+
+  @@index([user_id], map: "ix_tbl_carts_user", where: raw("([isdeleted]=(0))"))
+  @@index([user_id, cart_status], map: "ix_tbl_carts_user_status", where: raw("([isdeleted]=(0) AND [cart_status]='active')"))
+}
+
+model tbl_cloth_type_care_instructions {
+  cloth_type_care_instruction_id String                @id(map: "pk_tbl_cloth_type_care_instructions") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_cloth__cloth__4959E263") @db.VarChar(36)
+  cloth_type_id                  String                @db.VarChar(36)
+  care_instruction_id            String                @db.VarChar(36)
+  display_order                  Int                   @default(1, map: "DF__tbl_cloth__displ__4A4E069C")
+  isactive                       Boolean               @default(true, map: "DF__tbl_cloth__isact__4B422AD5")
+  isdeleted                      Boolean               @default(false, map: "DF__tbl_cloth__isdel__4C364F0E")
+  rcu                            String?               @db.VarChar(100)
+  rcm                            DateTime              @default(now(), map: "DF__tbl_cloth_t__rcm__4D2A7347") @db.DateTime
+  luu                            String?               @db.VarChar(100)
+  lcm                            DateTime?             @db.DateTime
+  tbl_care_instructions          tbl_care_instructions @relation(fields: [care_instruction_id], references: [care_instruction_id], onUpdate: NoAction, map: "fk_tbl_ctci_care_instruction")
+  tbl_cloth_types                tbl_cloth_types       @relation(fields: [cloth_type_id], references: [cloth_type_id], onUpdate: NoAction, map: "fk_tbl_ctci_cloth_type")
+
+  @@unique([cloth_type_id, care_instruction_id], map: "ux_tbl_ctci_unique", where: raw("([isdeleted]=(0))"))
+  @@index([cloth_type_id, display_order], map: "ix_tbl_ctci_type_order", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_cloth_types {
+  cloth_type_id                    String                             @id(map: "pk_tbl_cloth_types") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_cloth__cloth__3BFFE745") @db.VarChar(36)
+  cloth_type_name                  String                             @db.VarChar(255)
+  cloth_type_slug                  String                             @unique(map: "ux_tbl_cloth_types_slug", where: raw("([isdeleted]=(0))")) @db.VarChar(255)
+  description                      String?                            @db.VarChar(500)
+  display_order                    Int                                @default(1, map: "DF__tbl_cloth__displ__3CF40B7E")
+  isactive                         Boolean                            @default(true, map: "DF__tbl_cloth__isact__3DE82FB7")
+  isdeleted                        Boolean                            @default(false, map: "DF__tbl_cloth__isdel__3EDC53F0")
+  rcu                              String?                            @db.VarChar(100)
+  rcm                              DateTime                           @default(now(), map: "DF__tbl_cloth_t__rcm__3FD07829") @db.DateTime
+  luu                              String?                            @db.VarChar(100)
+  lcm                              DateTime?                          @db.DateTime
+  tbl_cloth_type_care_instructions tbl_cloth_type_care_instructions[]
+  tbl_product_variants             tbl_product_variants[]
+
+  @@index([isactive, isdeleted, display_order], map: "ix_tbl_cloth_types_active_order")
+}
+
+model tbl_coupon_usage {
+  coupon_usage_id String      @id(map: "PK__tbl_coup__1B44EFEBCD0F9DBD") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_coupo__coupo__278EDA44") @db.VarChar(36)
+  coupon_id       String      @db.VarChar(36)
+  user_id         String      @db.VarChar(36)
+  order_id        String?     @db.VarChar(36)
+  discount_amount Decimal     @db.Decimal(18, 2)
+  used_at         DateTime    @default(now(), map: "DF__tbl_coupo__used___2882FE7D") @db.DateTime
+  isactive        Boolean     @default(true, map: "DF__tbl_coupo__isact__297722B6")
+  isdeleted       Boolean     @default(false, map: "DF__tbl_coupo__isdel__2A6B46EF")
+  rcu             String?     @db.VarChar(100)
+  rcm             DateTime    @default(now(), map: "DF__tbl_coupon___rcm__2B5F6B28") @db.DateTime
+  luu             String?     @db.VarChar(100)
+  lcm             DateTime?   @db.DateTime
+  tbl_coupons     tbl_coupons @relation(fields: [coupon_id], references: [coupon_id], onUpdate: NoAction, map: "fk_tbl_coupon_usage_coupon")
+  tbl_orders      tbl_orders? @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_coupon_usage_order")
+
+  @@index([coupon_id], map: "ix_tbl_coupon_usage_coupon", where: raw("([isdeleted]=(0))"))
+  @@index([used_at], map: "ix_tbl_coupon_usage_date", where: raw("([isdeleted]=(0))"))
+  @@index([order_id], map: "ix_tbl_coupon_usage_order", where: raw("([isdeleted]=(0))"))
+  @@index([user_id], map: "ix_tbl_coupon_usage_user", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_coupons {
+  coupon_id           String             @id(map: "PK__tbl_coup__58CF63898F14BC10") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_coupo__coupo__0AF29B96") @db.VarChar(36)
+  coupon_code         String             @unique(map: "ux_tbl_coupons_code", where: raw("([isdeleted]=(0))")) @db.VarChar(100)
+  coupon_name         String?            @db.VarChar(255)
+  description         String?            @db.VarChar(500)
+  discount_type       String             @db.VarChar(20)
+  discount_value      Decimal            @db.Decimal(18, 2)
+  min_purchase_amount Decimal?           @db.Decimal(18, 2)
+  max_discount_amount Decimal?           @db.Decimal(18, 2)
+  usage_limit         Int?
+  usage_count         Int                @default(0, map: "DF__tbl_coupo__usage__0BE6BFCF")
+  per_user_limit      Int?               @default(1, map: "DF__tbl_coupo__per_u__0CDAE408")
+  start_date          DateTime           @db.DateTime
+  end_date            DateTime?          @db.DateTime
+  isactive            Boolean            @default(true, map: "DF__tbl_coupo__isact__0DCF0841")
+  isdeleted           Boolean            @default(false, map: "DF__tbl_coupo__isdel__0EC32C7A")
+  rcu                 String?            @db.VarChar(100)
+  rcm                 DateTime           @default(now(), map: "DF__tbl_coupons__rcm__0FB750B3") @db.DateTime
+  luu                 String?            @db.VarChar(100)
+  lcm                 DateTime?          @db.DateTime
+  tbl_coupon_usage    tbl_coupon_usage[]
+
+  @@index([start_date, end_date], map: "ix_tbl_coupons_dates", where: raw("([isdeleted]=(0) AND [isactive]=(1))"))
+}
+
+model tbl_courier_partners {
+  courier_partner_id String          @id(map: "PK__tbl_cour__39BCF39E2230EA0B") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_couri__couri__320C68B7") @db.VarChar(36)
+  courier_name       String          @db.VarChar(255)
+  courier_code       String          @unique(map: "ux_tbl_courier_partners_code") @db.VarChar(50)
+  contact_email      String?         @db.VarChar(255)
+  contact_phone      String?         @db.VarChar(50)
+  base_rate          Decimal?        @db.Decimal(18, 2)
+  rate_per_kg        Decimal?        @db.Decimal(18, 2)
+  api_base_url       String?         @db.VarChar(500)
+  api_key            String?         @db.VarChar(255)
+  integration_status String?         @db.VarChar(50)
+  isactive           Boolean         @default(true, map: "DF__tbl_couri__isact__33008CF0")
+  isdeleted          Boolean         @default(false, map: "DF__tbl_couri__isdel__33F4B129")
+  rcu                String?         @db.VarChar(100)
+  rcm                DateTime        @default(now(), map: "DF__tbl_courier__rcm__34E8D562") @db.DateTime
+  luu                String?         @db.VarChar(100)
+  lcm                DateTime?       @db.DateTime
+  tbl_shipments      tbl_shipments[]
+
+  @@index([courier_code], map: "ix_tbl_courier_partners_code", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_custom_appointments {
+  appointment_id                                                                                          String                       @id(map: "PK_tbl_custom_appointments") @default(dbgenerated("newid()"), map: "DF__tbl_custo__appoi__6AEFE058") @db.UniqueIdentifier
+  user_id                                                                                                 String?                      @db.UniqueIdentifier
+  appointment_date_slot_id                                                                                String                       @db.UniqueIdentifier
+  appointment_time_slot_id                                                                                String                       @unique(map: "UX_tbl_custom_appointments_time_slot", where: raw("([isdeleted]=(0))")) @db.UniqueIdentifier
+  name                                                                                                    String                       @db.VarChar(255)
+  city                                                                                                    String?                      @db.VarChar(150)
+  preferred_delivery_date                                                                                 DateTime?                    @db.Date
+  occasion                                                                                                String?                      @db.VarChar(255)
+  appointment_status                                                                                      String                       @default("requested", map: "DF_tbl_custom_appointments_status") @db.VarChar(30)
+  isrejected                                                                                              Boolean                      @default(false, map: "DF_tbl_custom_appointments_isrejected")
+  appointment_notes                                                                                       String?                      @db.VarChar(500)
+  requested_at                                                                                            DateTime                     @default(now(), map: "DF_tbl_custom_appointments_requested_at") @db.DateTime
+  approved_at                                                                                             DateTime?                    @db.DateTime
+  rejected_at                                                                                             DateTime?                    @db.DateTime
+  cancelled_at                                                                                            DateTime?                    @db.DateTime
+  isactive                                                                                                Boolean                      @default(true, map: "DF_tbl_custom_appointments_isactive")
+  isdeleted                                                                                               Boolean                      @default(false, map: "DF_tbl_custom_appointments_isdeleted")
+  rcu                                                                                                     String?                      @db.VarChar(100)
+  rcm                                                                                                     DateTime                     @default(now(), map: "DF_tbl_custom_appointments_rcm") @db.DateTime
+  luu                                                                                                     String?                      @db.VarChar(100)
+  lcm                                                                                                     DateTime?                    @db.DateTime
+  tbl_appointment_time_slots_tbl_appointment_time_slots_appointment_idTotbl_custom_appointments           tbl_appointment_time_slots[] @relation("tbl_appointment_time_slots_appointment_idTotbl_custom_appointments")
+  tbl_appointment_date_slots                                                                              tbl_appointment_date_slots   @relation(fields: [appointment_date_slot_id], references: [appointment_date_slot_id], onUpdate: NoAction, map: "FK_custom_appointments_date_slots")
+  tbl_appointment_time_slots_tbl_custom_appointments_appointment_time_slot_idTotbl_appointment_time_slots tbl_appointment_time_slots   @relation("tbl_custom_appointments_appointment_time_slot_idTotbl_appointment_time_slots", fields: [appointment_time_slot_id], references: [appointment_time_slot_id], onUpdate: NoAction, map: "FK_custom_appointments_time_slots")
+
+  @@index([user_id, requested_at], map: "IX_tbl_custom_appointments_user_time", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_customer_profiles {
+  profile_id              String    @id(map: "PK__tbl_cust__AEBB701F922A2DF3") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_custo__profi__73DA2C14") @db.VarChar(36)
+  user_id                 String    @unique(map: "ux_tbl_customer_profiles_user") @db.VarChar(36)
+  date_of_birth           DateTime? @db.Date
+  gender                  String?   @db.VarChar(20)
+  gstin                   String?   @db.VarChar(20)
+  company_name            String?   @db.VarChar(255)
+  preferred_language      String?   @db.VarChar(20)
+  preferred_currency      String?   @db.VarChar(10)
+  newsletter_subscription Boolean   @default(false, map: "DF__tbl_custo__newsl__74CE504D")
+  sms_notifications       Boolean   @default(true, map: "DF__tbl_custo__sms_n__75C27486")
+  email_notifications     Boolean   @default(true, map: "DF__tbl_custo__email__76B698BF")
+  push_notifications      Boolean   @default(true, map: "DF__tbl_custo__push___77AABCF8")
+  loyalty_points          Int       @default(0, map: "DF__tbl_custo__loyal__789EE131")
+  isactive                Boolean   @default(true, map: "DF__tbl_custo__isact__7993056A")
+  isdeleted               Boolean   @default(false, map: "DF__tbl_custo__isdel__7A8729A3")
+  rcu                     String?   @db.VarChar(100)
+  rcm                     DateTime  @default(now(), map: "DF__tbl_custome__rcm__7B7B4DDC") @db.DateTime
+  luu                     String?   @db.VarChar(100)
+  lcm                     DateTime? @db.DateTime
+  tbl_users               tbl_users @relation(fields: [user_id], references: [user_id], onUpdate: NoAction, map: "fk_tbl_customer_profiles_user")
+}
+
+model tbl_discount_targets {
+  discount_target_id String        @id(map: "PK__tbl_disc__B422BF010289AE72") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_disco__disco__1FEDB87C") @db.VarChar(36)
+  discount_id        String        @db.VarChar(36)
+  target_type        String        @db.VarChar(50)
+  target_id          String?       @db.VarChar(36)
+  isactive           Boolean       @default(true, map: "DF__tbl_disco__isact__20E1DCB5")
+  isdeleted          Boolean       @default(false, map: "DF__tbl_disco__isdel__21D600EE")
+  rcu                String?       @db.VarChar(100)
+  rcm                DateTime      @default(now(), map: "DF__tbl_discoun__rcm__22CA2527") @db.DateTime
+  luu                String?       @db.VarChar(100)
+  lcm                DateTime?     @db.DateTime
+  tbl_discounts      tbl_discounts @relation(fields: [discount_id], references: [discount_id], onUpdate: NoAction, map: "fk_tbl_discount_targets_discount")
+
+  @@index([discount_id], map: "ix_tbl_discount_targets_discount", where: raw("([isdeleted]=(0))"))
+  @@index([target_type, target_id], map: "ix_tbl_discount_targets_target", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_discounts {
+  discount_id          String                 @id(map: "PK__tbl_disc__BDBE9EF9D720D481") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_disco__disco__15702A09") @db.VarChar(36)
+  discount_name        String                 @db.VarChar(255)
+  description          String?                @db.VarChar(500)
+  discount_type        String                 @db.VarChar(20)
+  discount_value       Decimal                @db.Decimal(18, 2)
+  max_discount_amount  Decimal?               @db.Decimal(18, 2)
+  usage_limit          Int?
+  usage_count          Int                    @default(0, map: "DF__tbl_disco__usage__16644E42")
+  start_date           DateTime               @db.DateTime
+  end_date             DateTime?              @db.DateTime
+  discount_priority    Int                    @default(1, map: "DF__tbl_disco__disco__1758727B")
+  isactive             Boolean                @default(true, map: "DF__tbl_disco__isact__184C96B4")
+  isdeleted            Boolean                @default(false, map: "DF__tbl_disco__isdel__1940BAED")
+  rcu                  String?                @db.VarChar(100)
+  rcm                  DateTime               @default(now(), map: "DF__tbl_discoun__rcm__1A34DF26") @db.DateTime
+  luu                  String?                @db.VarChar(100)
+  lcm                  DateTime?              @db.DateTime
+  tbl_discount_targets tbl_discount_targets[]
+
+  @@index([start_date, end_date, discount_priority], map: "ix_tbl_discounts_dates_priority", where: raw("([isdeleted]=(0) AND [isactive]=(1))"))
+}
+
+model tbl_faqs {
+  faq_id        String    @id(map: "PK_tbl_faqs") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_faqs__faq_id__6B0FDBE9") @db.VarChar(36)
+  question      String    @db.VarChar(1000)
+  answer        String    @db.VarChar(Max)
+  display_order Int       @default(1, map: "DF__tbl_faqs__displa__6C040022")
+  isactive      Boolean   @default(true, map: "DF__tbl_faqs__isacti__6CF8245B")
+  isdeleted     Boolean   @default(false, map: "DF__tbl_faqs__isdele__6DEC4894")
+  rcu           String?   @db.VarChar(100)
+  rcm           DateTime  @default(now(), map: "DF__tbl_faqs__rcm__6EE06CCD") @db.DateTime
+  luu           String?   @db.VarChar(100)
+  lcm           DateTime? @db.DateTime
+
+  @@index([isactive, isdeleted, display_order], map: "ix_tbl_faqs_active_order")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbl_image_sliders {
+  image_slider_id             String?   @default("newid()", map: "DF__tbl_image__image__0A888742") @db.VarChar(36)
+  image_url                   String?   @db.VarChar(Max)
+  title                       String?   @db.VarChar(Max)
+  subtitle                    String?   @db.VarChar(Max)
+  button_text                 String?   @default("shop now", map: "DF__tbl_image__butto__0B7CAB7B") @db.VarChar(Max)
+  redirect_link               String?   @db.VarChar(Max)
+  display_order               Int?      @default(1, map: "DF__tbl_image__displ__0C70CFB4")
+  auto_slide_interval_seconds Int?      @default(5, map: "DF__tbl_image__auto___0D64F3ED")
+  isactive                    Boolean?  @default(true, map: "DF__tbl_image__isact__0E591826")
+  isdeleted                   Boolean?  @default(false, map: "DF__tbl_image__isdel__0F4D3C5F")
+  rcu                         String?   @db.VarChar(Max)
+  rcm                         DateTime? @default(now(), map: "DF__tbl_image_s__rcm__10416098") @db.DateTime
+  luu                         String?   @db.VarChar(Max)
+  lcm                         DateTime? @db.DateTime
+
+  @@ignore
+}
+
+model tbl_invoices {
+  invoice_id     String     @id(map: "PK__tbl_invo__F58DFD4968E79D18") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_invoi__invoi__66B53B20") @db.VarChar(36)
+  order_id       String     @db.VarChar(36)
+  invoice_number String     @unique(map: "ux_tbl_invoices_invoice_number", where: raw("([isdeleted]=(0))")) @db.VarChar(50)
+  invoice_date   DateTime   @default(now(), map: "DF__tbl_invoi__invoi__67A95F59") @db.DateTime
+  invoice_url    String?    @db.VarChar(1000)
+  notes          String?    @db.VarChar(500)
+  isactive       Boolean    @default(true, map: "DF__tbl_invoi__isact__689D8392")
+  isdeleted      Boolean    @default(false, map: "DF__tbl_invoi__isdel__6991A7CB")
+  rcu            String?    @db.VarChar(100)
+  rcm            DateTime   @default(now(), map: "DF__tbl_invoice__rcm__6A85CC04") @db.DateTime
+  luu            String?    @db.VarChar(100)
+  lcm            DateTime?  @db.DateTime
+  tbl_orders     tbl_orders @relation(fields: [order_id], references: [order_id], onUpdate: NoAction, map: "fk_tbl_invoices_order")
+
+  @@index([order_id], map: "ix_tbl_invoices_order", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_legal_page_header {
+  id             Int       @id(map: "PK__tbl_lega__3213E83FEB7C5468") @default(autoincrement())
+  page_type      String    @db.NVarChar(50)
+  page_title     String    @db.NVarChar(255)
+  intro_text     String    @db.NVarChar(Max)
+  effective_date DateTime? @db.Date
+  version_number String?   @db.NVarChar(20)
+  is_active      Boolean   @default(true, map: "DF__tbl_legal__is_ac__44B528D7")
+  updated_by     String?   @db.NVarChar(100)
+  updated_at     DateTime  @default(now(), map: "DF__tbl_legal__updat__45A94D10") @db.DateTime
+}
+
+model tbl_legal_page_sections {
+  id            Int       @id(map: "PK__tbl_lega__3213E83F774BB419") @default(autoincrement())
+  page_type     String    @db.NVarChar(50)
+  section_title String    @db.NVarChar(255)
+  section_order Int       @default(0, map: "DF__tbl_legal__secti__4885B9BB")
+  content       String    @db.NVarChar(Max)
+  is_active     Boolean   @default(true, map: "DF__tbl_legal__is_ac__4979DDF4")
+  created_by    String?   @db.NVarChar(100)
+  created_at    DateTime  @default(now(), map: "DF__tbl_legal__creat__4A6E022D") @db.DateTime
+  updated_by    String?   @db.NVarChar(100)
+  updated_at    DateTime? @db.DateTime
+}
+
+model tbl_menu_categories {
+  menu_category_id       String                   @id(map: "pk_tbl_menu_categories") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_menu___menu___4C6B5938") @db.VarChar(36)
+  menu_category_name     String                   @db.VarChar(255)
+  menu_category_slug     String                   @unique(map: "ux_tbl_menu_categories_slug", where: raw("([isdeleted]=(0))")) @db.VarChar(255)
+  display_order          Int                      @default(1, map: "DF__tbl_menu___displ__4D5F7D71")
+  isactive               Boolean                  @default(true, map: "DF__tbl_menu___isact__4E53A1AA")
+  isdeleted              Boolean                  @default(false, map: "DF__tbl_menu___isdel__4F47C5E3")
+  rcu                    String?                  @db.VarChar(100)
+  rcm                    DateTime                 @default(now(), map: "DF__tbl_menu_ca__rcm__503BEA1C") @db.DateTime
+  luu                    String?                  @db.VarChar(100)
+  lcm                    DateTime?                @db.DateTime
+  tbl_menu_subcategories tbl_menu_subcategories[]
+
+  @@index([isactive, isdeleted, display_order], map: "ix_tbl_menu_categories_active_order")
+  @@index([display_order], map: "ix_tbl_menu_categories_order", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_menu_subcategories {
+  menu_subcategory_id   String              @id(map: "pk_tbl_menu_subcategories") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_menu___menu___531856C7") @db.VarChar(36)
+  menu_category_id      String              @db.VarChar(36)
+  menu_subcategory_name String              @db.VarChar(255)
+  menu_subcategory_slug String              @unique(map: "ux_tbl_menu_subcategories_slug", where: raw("([isdeleted]=(0))")) @db.VarChar(255)
+  redirect_link         String?             @db.VarChar(1000)
+  display_order         Int                 @default(1, map: "DF__tbl_menu___displ__540C7B00")
+  isactive              Boolean             @default(true, map: "DF__tbl_menu___isact__55009F39")
+  isdeleted             Boolean             @default(false, map: "DF__tbl_menu___isdel__55F4C372")
+  rcu                   String?             @db.VarChar(100)
+  rcm                   DateTime            @default(now(), map: "DF__tbl_menu_su__rcm__56E8E7AB") @db.DateTime
+  luu                   String?             @db.VarChar(100)
+  lcm                   DateTime?           @db.DateTime
+  tbl_menu_categories   tbl_menu_categories @relation(fields: [menu_category_id], references: [menu_category_id], onUpdate: NoAction, map: "fk_tbl_menu_subcategories_category")
+
+  @@index([menu_category_id, isactive, isdeleted, display_order], map: "ix_tbl_menu_subcategories_active_order")
+  @@index([menu_category_id, display_order], map: "ix_tbl_menu_subcategories_category_order", where: raw("([isdeleted]=(0))"))
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbl_menu_video {
+  menu_video_id    String?   @default("newid()", map: "DF__tbl_menu___menu___1229A90A") @db.VarChar(36)
+  video_type       String?   @default("youtube", map: "DF__tbl_menu___video__131DCD43") @db.VarChar(36)
+  video_url        String?   @db.VarChar(Max)
+  poster_image_url String?   @db.VarChar(Max)
+  autoplay         Boolean?  @default(true, map: "DF__tbl_menu___autop__1411F17C")
+  loop_video       Boolean?  @default(true, map: "DF__tbl_menu___loop___150615B5")
+  mute_default     Boolean?  @default(true, map: "DF__tbl_menu___mute___15FA39EE")
+  display_order    Int?      @default(1, map: "DF__tbl_menu___displ__16EE5E27")
+  isactive         Boolean?  @default(true, map: "DF__tbl_menu___isact__17E28260")
+  isdeleted        Boolean?  @default(false, map: "DF__tbl_menu___isdel__18D6A699")
+  rcu              String?   @db.VarChar(Max)
+  rcm              DateTime? @default(now(), map: "DF__tbl_menu_vi__rcm__19CACAD2") @db.DateTime
+  luu              String?   @db.VarChar(Max)
+  lcm              DateTime? @db.DateTime
+
+  @@ignore
+}
+
+model tbl_newsletter_subscriptions {
+  newsletter_subscription_id String     @id(map: "PK_tbl_newsletter_subscriptions") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_newsl__newsl__71BCD978") @db.VarChar(36)
+  emailid                    String     @unique(map: "ux_tbl_newsletter_subscriptions_email", where: raw("([isdeleted]=(0))")) @db.VarChar(255)
+  user_id                    String?    @db.VarChar(36)
+  subscribed_at              DateTime   @default(now(), map: "DF__tbl_newsl__subsc__72B0FDB1") @db.DateTime
+  unsubscribed_at            DateTime?  @db.DateTime
+  subscription_status        String     @default("subscribed", map: "DF__tbl_newsl__subsc__73A521EA") @db.VarChar(20)
+  isactive                   Boolean    @default(true, map: "DF__tbl_newsl__isact__74994623")
+  isdeleted                  Boolean    @default(false, map: "DF__tbl_newsl__isdel__758D6A5C")
+  rcu                        String?    @db.VarChar(100)
+  rcm                        DateTime   @default(now(), map: "DF__tbl_newslet__rcm__76818E95") @db.DateTime
+  luu                        String?    @db.VarChar(100)
+  lcm                        DateTime?  @db.DateTime
+  tbl_users                  tbl_users? @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_tbl_newsletter_subscriptions_users")
+
+  @@index([subscription_status], map: "ix_tbl_newsletter_subscriptions_status")
+  @@index([subscribed_at], map: "ix_tbl_newsletter_subscriptions_subscribed_at")
+  @@index([user_id], map: "ix_tbl_newsletter_subscriptions_user")
+}
+
+model tbl_order_addresses {
+  order_address_id String     @id(map: "PK__tbl_orde__9A9DCB571DED03B7") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_order__order__4EDDB18F") @db.VarChar(36)
+  order_id         String     @db.VarChar(36)
+  address_type     String     @db.VarChar(20)
+  full_name        String     @db.VarChar(255)
+  mobile_number    String     @db.VarChar(50)
+  house_street     String     @db.VarChar(500)
+  city             String     @db.VarChar(150)
+  state            String     @db.VarChar(150)
+  pincode          String     @db.VarChar(20)
+  landmark         String?    @db.VarChar(255)
+  isactive         Boolean    @default(true, map: "DF__tbl_order__isact__4FD1D5C8")
+  isdeleted        Boolean    @default(false, map: "DF__tbl_order__isdel__50C5FA01")
+  rcu              String?    @db.VarChar(100)
+  rcm              DateTime   @default(now(), map: "DF__tbl_order_a__rcm__51BA1E3A") @db.DateTime
+  luu              String?    @db.VarChar(100)
+  lcm              DateTime?  @db.DateTime
+  tbl_orders       tbl_orders @relation(fields: [order_id], references: [order_id], onUpdate: NoAction, map: "fk_tbl_order_addresses_order")
+
+  @@index([order_id, address_type], map: "ix_tbl_order_addresses_order_type", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_order_cancellations {
+  order_cancellation_id String     @id(map: "PK__tbl_orde__C033AB8710CC116B") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_order__order__5F141958") @db.VarChar(36)
+  order_id              String     @db.VarChar(36)
+  cancelled_by          String?    @db.VarChar(50)
+  cancelled_reason      String?    @db.VarChar(500)
+  cancelled_at          DateTime   @default(now(), map: "DF__tbl_order__cance__60083D91") @db.DateTime
+  isactive              Boolean    @default(true, map: "DF__tbl_order__isact__60FC61CA")
+  isdeleted             Boolean    @default(false, map: "DF__tbl_order__isdel__61F08603")
+  rcu                   String?    @db.VarChar(100)
+  rcm                   DateTime   @default(now(), map: "DF__tbl_order_c__rcm__62E4AA3C") @db.DateTime
+  luu                   String?    @db.VarChar(100)
+  lcm                   DateTime?  @db.DateTime
+  tbl_orders            tbl_orders @relation(fields: [order_id], references: [order_id], onUpdate: NoAction, map: "fk_tbl_order_cancellations_order")
+
+  @@index([order_id], map: "ix_tbl_order_cancellations_order", where: raw("([isdeleted]=(0))"))
+  @@index([cancelled_at], map: "ix_tbl_order_cancellations_time", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_order_items {
+  order_item_id        String                @id(map: "PK__tbl_orde__3764B6BCA13309CF") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_order__order__45544755") @db.VarChar(36)
+  order_id             String                @db.VarChar(36)
+  product_id           String                @db.VarChar(36)
+  product_variant_id   String?               @db.VarChar(36)
+  product_name         String                @db.VarChar(255)
+  sku                  String?               @db.VarChar(100)
+  qty                  Int                   @default(1, map: "DF__tbl_order_i__qty__46486B8E")
+  unit_price           Decimal?              @db.Decimal(18, 2)
+  total_price          Decimal?              @db.Decimal(18, 2)
+  isactive             Boolean               @default(true, map: "DF__tbl_order__isact__473C8FC7")
+  isdeleted            Boolean               @default(false, map: "DF__tbl_order__isdel__4830B400")
+  rcu                  String?               @db.VarChar(100)
+  rcm                  DateTime              @default(now(), map: "DF__tbl_order_i__rcm__4924D839") @db.DateTime
+  luu                  String?               @db.VarChar(100)
+  lcm                  DateTime?             @db.DateTime
+  tbl_orders           tbl_orders            @relation(fields: [order_id], references: [order_id], onUpdate: NoAction, map: "fk_tbl_order_items_order")
+  tbl_products         tbl_products          @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_order_items_product")
+  tbl_product_variants tbl_product_variants? @relation(fields: [product_variant_id], references: [product_variant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_order_items_variant")
+  tbl_product_reviews  tbl_product_reviews[]
+
+  @@index([order_id], map: "ix_tbl_order_items_order", where: raw("([isdeleted]=(0))"))
+  @@index([product_id], map: "ix_tbl_order_items_product", where: raw("([isdeleted]=(0))"))
+  @@index([product_variant_id], map: "ix_tbl_order_items_variant", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_order_promotions {
+  order_promotion_id String     @id(map: "PK__tbl_orde__0A2A9E0E1EDCE3E3") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_order__order__7ABC33CD") @db.VarChar(36)
+  order_id           String     @db.VarChar(36)
+  promotion_type     String     @db.VarChar(50)
+  promotion_id       String?    @db.VarChar(36)
+  promotion_name     String?    @db.VarChar(255)
+  discount_amount    Decimal    @db.Decimal(18, 2)
+  discount_type      String?    @db.VarChar(20)
+  discount_value     Decimal?   @db.Decimal(18, 2)
+  applied_at         DateTime   @default(now(), map: "DF__tbl_order__appli__7BB05806") @db.DateTime
+  isactive           Boolean    @default(true, map: "DF__tbl_order__isact__7CA47C3F")
+  isdeleted          Boolean    @default(false, map: "DF__tbl_order__isdel__7D98A078")
+  rcu                String?    @db.VarChar(100)
+  rcm                DateTime   @default(now(), map: "DF__tbl_order_p__rcm__7E8CC4B1") @db.DateTime
+  luu                String?    @db.VarChar(100)
+  lcm                DateTime?  @db.DateTime
+  tbl_orders         tbl_orders @relation(fields: [order_id], references: [order_id], onUpdate: NoAction, map: "fk_tbl_order_promotions_order")
+
+  @@index([applied_at], map: "ix_tbl_order_promotions_date", where: raw("([isdeleted]=(0))"))
+  @@index([order_id], map: "ix_tbl_order_promotions_order", where: raw("([isdeleted]=(0))"))
+  @@index([promotion_type], map: "ix_tbl_order_promotions_type", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_order_status_history {
+  order_status_history_id String                  @id(map: "PK__tbl_orde__0AEF0D355F8E1176") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_order__order__567ED357") @db.VarChar(36)
+  order_id                String                  @db.VarChar(36)
+  order_status_id         String                  @db.VarChar(36)
+  orderstatus             String                  @db.VarChar(50)
+  orderstatusby           String?                 @db.VarChar(255)
+  orderstatustime         DateTime                @default(now(), map: "DF__tbl_order__order__5772F790") @db.DateTime
+  remarks                 String?                 @db.VarChar(500)
+  isactive                Boolean                 @default(true, map: "DF__tbl_order__isact__58671BC9")
+  isdeleted               Boolean                 @default(false, map: "DF__tbl_order__isdel__595B4002")
+  rcu                     String?                 @db.VarChar(100)
+  rcm                     DateTime                @default(now(), map: "DF__tbl_order_s__rcm__5A4F643B") @db.DateTime
+  luu                     String?                 @db.VarChar(100)
+  lcm                     DateTime?               @db.DateTime
+  tbl_orders              tbl_orders              @relation(fields: [order_id], references: [order_id], onUpdate: NoAction, map: "fk_tbl_order_status_history_order")
+  tbl_order_status_master tbl_order_status_master @relation(fields: [order_status_id], references: [order_status_id], onUpdate: NoAction, map: "fk_tbl_order_status_history_status")
+
+  @@index([order_id, orderstatustime], map: "ix_tbl_order_status_history_order_time", where: raw("([isdeleted]=(0))"))
+  @@index([order_status_id], map: "ix_tbl_order_status_history_status", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_order_status_master {
+  order_status_id          String                     @id(map: "PK__tbl_orde__A499CF231C312767") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_order__order__3429BB53") @db.VarChar(36)
+  status_name              String                     @db.VarChar(100)
+  status_code              String                     @unique(map: "ux_tbl_order_status_master_status_code") @db.VarChar(50)
+  display_order            Int                        @default(1, map: "DF__tbl_order__displ__351DDF8C")
+  iscancelled_status       Boolean                    @default(false, map: "DF__tbl_order__iscan__361203C5")
+  isactive                 Boolean                    @default(true, map: "DF__tbl_order__isact__370627FE")
+  isdeleted                Boolean                    @default(false, map: "DF__tbl_order__isdel__37FA4C37")
+  rcu                      String?                    @db.VarChar(100)
+  rcm                      DateTime                   @default(now(), map: "DF__tbl_order_s__rcm__38EE7070") @db.DateTime
+  luu                      String?                    @db.VarChar(100)
+  lcm                      DateTime?                  @db.DateTime
+  tbl_order_status_history tbl_order_status_history[]
+  tbl_orders               tbl_orders[]
+
+  @@index([isactive, isdeleted], map: "ix_tbl_order_status_master_active", where: raw("([isdeleted]=(0))"))
+  @@index([display_order], map: "ix_tbl_order_status_master_display_order", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_orders {
+  order_id                 String                     @id(map: "PK__tbl_orde__46596229D70FFA50") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_order__order__3BCADD1B") @db.VarChar(36)
+  user_id                  String                     @db.VarChar(36)
+  cart_id                  String?                    @db.VarChar(36)
+  order_number             String                     @unique(map: "ux_tbl_orders_order_number", where: raw("([isdeleted]=(0))")) @db.VarChar(50)
+  order_status_id          String                     @db.VarChar(36)
+  orderstatus              String?                    @db.VarChar(50)
+  subtotal                 Decimal?                   @db.Decimal(18, 2)
+  discount_amount          Decimal?                   @db.Decimal(18, 2)
+  shipping_amount          Decimal?                   @db.Decimal(18, 2)
+  tax_amount               Decimal?                   @db.Decimal(18, 2)
+  total_amount             Decimal?                   @db.Decimal(18, 2)
+  payment_status           String?                    @db.VarChar(50)
+  notes                    String?                    @db.VarChar(500)
+  placed_at                DateTime                   @default(now(), map: "DF__tbl_order__place__3CBF0154") @db.DateTime
+  cancelled_at             DateTime?                  @db.DateTime
+  isactive                 Boolean                    @default(true, map: "DF__tbl_order__isact__3DB3258D")
+  isdeleted                Boolean                    @default(false, map: "DF__tbl_order__isdel__3EA749C6")
+  rcu                      String?                    @db.VarChar(100)
+  rcm                      DateTime                   @default(now(), map: "DF__tbl_orders__rcm__3F9B6DFF") @db.DateTime
+  luu                      String?                    @db.VarChar(100)
+  lcm                      DateTime?                  @db.DateTime
+  tbl_coupon_usage         tbl_coupon_usage[]
+  tbl_invoices             tbl_invoices[]
+  tbl_order_addresses      tbl_order_addresses[]
+  tbl_order_cancellations  tbl_order_cancellations[]
+  tbl_order_items          tbl_order_items[]
+  tbl_order_promotions     tbl_order_promotions[]
+  tbl_order_status_history tbl_order_status_history[]
+  tbl_carts                tbl_carts?                 @relation(fields: [cart_id], references: [cart_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_orders_cart")
+  tbl_order_status_master  tbl_order_status_master    @relation(fields: [order_status_id], references: [order_status_id], onUpdate: NoAction, map: "fk_tbl_orders_status")
+  tbl_payments             tbl_payments[]
+  tbl_refunds              tbl_refunds[]
+  tbl_returns              tbl_returns[]
+  tbl_shipments            tbl_shipments[]
+
+  @@index([cart_id], map: "ix_tbl_orders_cart", where: raw("([isdeleted]=(0))"))
+  @@index([order_status_id], map: "ix_tbl_orders_status", where: raw("([isdeleted]=(0))"))
+  @@index([user_id, placed_at], map: "ix_tbl_orders_user_placed_at", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_payments {
+  payment_id          String        @id(map: "PK__tbl_paym__ED1FC9EA9578C69D") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_payme__payme__6E565CE8") @db.VarChar(36)
+  order_id            String        @db.VarChar(36)
+  user_id             String        @db.VarChar(36)
+  payment_provider    String        @default("razorpay", map: "DF__tbl_payme__payme__6F4A8121") @db.VarChar(50)
+  payment_method_type String?       @db.VarChar(20)
+  payment_status      String        @default("pending", map: "DF__tbl_payme__payme__703EA55A") @db.VarChar(50)
+  amount              Decimal       @db.Decimal(18, 2)
+  currency_code       String        @default("inr", map: "DF__tbl_payme__curre__7132C993") @db.VarChar(10)
+  razorpay_order_id   String?       @db.VarChar(100)
+  razorpay_payment_id String?       @db.VarChar(100)
+  razorpay_signature  String?       @db.VarChar(255)
+  paid_at             DateTime?     @db.DateTime
+  failed_at           DateTime?     @db.DateTime
+  refund_amount       Decimal?      @db.Decimal(18, 2)
+  refunded_at         DateTime?     @db.DateTime
+  notes               String?       @db.VarChar(500)
+  isactive            Boolean       @default(true, map: "DF__tbl_payme__isact__7226EDCC")
+  isdeleted           Boolean       @default(false, map: "DF__tbl_payme__isdel__731B1205")
+  rcu                 String?       @db.VarChar(100)
+  rcm                 DateTime      @default(now(), map: "DF__tbl_payment__rcm__740F363E") @db.DateTime
+  luu                 String?       @db.VarChar(100)
+  lcm                 DateTime?     @db.DateTime
+  tbl_orders          tbl_orders    @relation(fields: [order_id], references: [order_id], onUpdate: NoAction, map: "fk_tbl_payments_order")
+  tbl_refunds         tbl_refunds[]
+
+  @@index([order_id], map: "ix_tbl_payments_order", where: raw("([isdeleted]=(0))"))
+  @@index([paid_at], map: "ix_tbl_payments_paid_at", where: raw("([isdeleted]=(0) AND [payment_status]='paid')"))
+  @@index([razorpay_payment_id], map: "ix_tbl_payments_razorpay_payment_id", where: raw("([isdeleted]=(0))"))
+  @@index([payment_status], map: "ix_tbl_payments_status", where: raw("([isdeleted]=(0))"))
+  @@index([user_id], map: "ix_tbl_payments_user", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_product_attribute_values {
+  product_attribute_value_id String                @id(map: "pk_tbl_product_attribute_values") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_produ__produ__6CA31EA0") @db.VarChar(36)
+  product_id                 String                @db.VarChar(36)
+  product_variant_id         String?               @db.VarChar(36)
+  attribute_id               String                @db.VarChar(36)
+  attribute_value            String                @db.VarChar(1000)
+  isactive                   Boolean               @default(true, map: "DF__tbl_produ__isact__6D9742D9")
+  isdeleted                  Boolean               @default(false, map: "DF__tbl_produ__isdel__6E8B6712")
+  rcu                        String?               @db.VarChar(100)
+  rcm                        DateTime              @default(now(), map: "DF__tbl_product__rcm__6F7F8B4B") @db.DateTime
+  luu                        String?               @db.VarChar(100)
+  lcm                        DateTime?             @db.DateTime
+  tbl_attributes             tbl_attributes        @relation(fields: [attribute_id], references: [attribute_id], onUpdate: NoAction, map: "fk_tbl_pav_attribute")
+  tbl_products               tbl_products          @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_pav_product")
+  tbl_product_variants       tbl_product_variants? @relation(fields: [product_variant_id], references: [product_variant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_pav_variant")
+
+  @@unique([product_id, product_variant_id, attribute_id], map: "ux_tbl_pav_unique", where: raw("([isdeleted]=(0))"))
+  @@index([attribute_id], map: "ix_tbl_pav_attribute", where: raw("([isdeleted]=(0))"))
+  @@index([product_id, attribute_id], map: "ix_tbl_pav_product_attribute", where: raw("([isdeleted]=(0))"))
+  @@index([product_variant_id], map: "ix_tbl_pav_variant", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_product_media {
+  product_media_id     String                @id(map: "pk_tbl_product_media") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_produ__produ__5C6CB6D7") @db.VarChar(36)
+  product_id           String                @db.VarChar(36)
+  product_variant_id   String?               @db.VarChar(36)
+  media_type           String                @db.VarChar(20)
+  media_url            String                @db.VarChar(1000)
+  alt_text             String?               @db.VarChar(255)
+  display_order        Int                   @default(1, map: "DF__tbl_produ__displ__5D60DB10")
+  isprimary            Boolean               @default(false, map: "DF__tbl_produ__ispri__5E54FF49")
+  isactive             Boolean               @default(true, map: "DF__tbl_produ__isact__5F492382")
+  isdeleted            Boolean               @default(false, map: "DF__tbl_produ__isdel__603D47BB")
+  rcu                  String?               @db.VarChar(100)
+  rcm                  DateTime              @default(now(), map: "DF__tbl_product__rcm__61316BF4") @db.DateTime
+  luu                  String?               @db.VarChar(100)
+  lcm                  DateTime?             @db.DateTime
+  tbl_products         tbl_products          @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_product_media_product")
+  tbl_product_variants tbl_product_variants? @relation(fields: [product_variant_id], references: [product_variant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_product_media_variant")
+
+  @@index([product_id, isprimary], map: "ix_tbl_product_media_primary", where: raw("([isdeleted]=(0))"))
+  @@index([product_id, display_order], map: "ix_tbl_product_media_product_order", where: raw("([isdeleted]=(0))"))
+  @@index([product_variant_id], map: "ix_tbl_product_media_variant", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_product_rating_summary {
+  product_id     String    @id(map: "PK__tbl_prod__47027DF5F127799D") @db.VarChar(36)
+  avg_rating     Decimal?  @default(0, map: "DF__tbl_produ__avg_r__0A537D18") @db.Decimal(3, 2)
+  total_reviews  Int?      @default(0, map: "DF__tbl_produ__total__0B47A151")
+  rating_1_count Int?      @default(0, map: "DF__tbl_produ__ratin__0C3BC58A")
+  rating_2_count Int?      @default(0, map: "DF__tbl_produ__ratin__0D2FE9C3")
+  rating_3_count Int?      @default(0, map: "DF__tbl_produ__ratin__0E240DFC")
+  rating_4_count Int?      @default(0, map: "DF__tbl_produ__ratin__0F183235")
+  rating_5_count Int?      @default(0, map: "DF__tbl_produ__ratin__100C566E")
+  rcu            String?   @db.VarChar(100)
+  rcm            DateTime? @default(now(), map: "DF__tbl_product__rcm__11007AA7") @db.DateTime
+  luu            String?   @db.VarChar(100)
+  lcm            DateTime? @db.DateTime
+}
+
+model tbl_product_reviews {
+  product_review_id    String                 @id(map: "PK__tbl_prod__8440EB03F3CD2A45") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_produ__produ__2759D01A") @db.VarChar(36)
+  product_id           String                 @db.VarChar(36)
+  user_id              String                 @db.VarChar(36)
+  order_item_id        String?                @db.VarChar(36)
+  rating               Int
+  review_title         String?                @db.VarChar(255)
+  review_text          String?                @db.VarChar(Max)
+  helpful_count        Int                    @default(0, map: "DF__tbl_produ__helpf__284DF453")
+  unhelpful_count      Int                    @default(0, map: "DF__tbl_produ__unhel__2942188C")
+  is_verified_purchase Boolean                @default(false, map: "DF__tbl_produ__is_ve__2A363CC5")
+  review_status        String                 @default("pending", map: "DF__tbl_produ__revie__2B2A60FE") @db.VarChar(50)
+  reviewed_date        DateTime               @default(now(), map: "DF__tbl_produ__revie__2C1E8537") @db.DateTime
+  approved_date        DateTime?              @db.DateTime
+  isactive             Boolean                @default(true, map: "DF__tbl_produ__isact__2D12A970")
+  isdeleted            Boolean                @default(false, map: "DF__tbl_produ__isdel__2E06CDA9")
+  rcu                  String?                @db.VarChar(100)
+  rcm                  DateTime               @default(now(), map: "DF__tbl_product__rcm__2EFAF1E2") @db.DateTime
+  luu                  String?                @db.VarChar(100)
+  lcm                  DateTime?              @db.DateTime
+  tbl_order_items      tbl_order_items?       @relation(fields: [order_item_id], references: [order_item_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_product_reviews_order_item")
+  tbl_products         tbl_products           @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_product_reviews_product")
+  tbl_users            tbl_users              @relation(fields: [user_id], references: [user_id], onUpdate: NoAction, map: "fk_tbl_product_reviews_user")
+  tbl_review_responses tbl_review_responses[]
+
+  @@index([reviewed_date], map: "ix_tbl_product_reviews_date", where: raw("([isdeleted]=(0))"))
+  @@index([product_id, rating], map: "ix_tbl_product_reviews_product_rating", where: raw("([isdeleted]=(0) AND [review_status]='approved')"))
+  @@index([review_status], map: "ix_tbl_product_reviews_status", where: raw("([isdeleted]=(0))"))
+  @@index([user_id], map: "ix_tbl_product_reviews_user", where: raw("([isdeleted]=(0))"))
+  @@index([is_verified_purchase], map: "ix_tbl_product_reviews_verified", where: raw("([isdeleted]=(0) AND [is_verified_purchase]=(1))"))
+}
+
+model tbl_product_seo {
+  product_seo_id  String       @id(map: "pk_tbl_product_seo") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_produ__produ__753864A1") @db.VarChar(36)
+  product_id      String       @unique(map: "ux_tbl_product_seo_product", where: raw("([isdeleted]=(0))")) @db.VarChar(36)
+  seo_title       String?      @db.VarChar(255)
+  seo_description String?      @db.VarChar(500)
+  seo_keywords    String?      @db.VarChar(500)
+  og_image_url    String?      @db.VarChar(1000)
+  isactive        Boolean      @default(true, map: "DF__tbl_produ__isact__762C88DA")
+  isdeleted       Boolean      @default(false, map: "DF__tbl_produ__isdel__7720AD13")
+  rcu             String?      @db.VarChar(100)
+  rcm             DateTime     @default(now(), map: "DF__tbl_product__rcm__7814D14C") @db.DateTime
+  luu             String?      @db.VarChar(100)
+  lcm             DateTime?    @db.DateTime
+  tbl_products    tbl_products @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_product_seo_product")
+}
+
+model tbl_product_variants {
+  product_variant_id           String                         @id(map: "pk_tbl_product_variants") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_produ__produ__51EF2864") @db.VarChar(36)
+  product_id                   String                         @unique(map: "ux_tbl_product_variants_one_default", where: raw("([isdeleted]=(0) AND [isdefault]=(1))")) @db.VarChar(36)
+  sku                          String                         @unique(map: "ux_tbl_product_variants_sku", where: raw("([isdeleted]=(0))")) @db.VarChar(100)
+  variant_name                 String?                        @db.VarChar(255)
+  price                        Decimal?                       @db.Decimal(18, 2)
+  stock_qty                    Int                            @default(0, map: "DF__tbl_produ__stock__52E34C9D")
+  size_id                      String?                        @db.VarChar(36)
+  cloth_type_id                String?                        @db.VarChar(36)
+  isdefault                    Boolean                        @default(false, map: "DF__tbl_produ__isdef__53D770D6")
+  isactive                     Boolean                        @default(true, map: "DF__tbl_produ__isact__54CB950F")
+  isdeleted                    Boolean                        @default(false, map: "DF__tbl_produ__isdel__55BFB948")
+  rcu                          String?                        @db.VarChar(100)
+  rcm                          DateTime                       @default(now(), map: "DF__tbl_product__rcm__56B3DD81") @db.DateTime
+  luu                          String?                        @db.VarChar(100)
+  lcm                          DateTime?                      @db.DateTime
+  tbl_cart_items               tbl_cart_items[]
+  tbl_order_items              tbl_order_items[]
+  tbl_product_attribute_values tbl_product_attribute_values[]
+  tbl_product_media            tbl_product_media[]
+  tbl_cloth_types              tbl_cloth_types?               @relation(fields: [cloth_type_id], references: [cloth_type_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_product_variants_cloth_type")
+  tbl_products                 tbl_products                   @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_product_variants_product")
+  tbl_sizes                    tbl_sizes?                     @relation(fields: [size_id], references: [size_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_product_variants_size")
+  tbl_wishlist_items           tbl_wishlist_items[]
+
+  @@index([product_id], map: "ix_tbl_product_variants_product", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_products {
+  product_id                   String                         @id(map: "pk_tbl_products") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_produ__produ__2EA5EC27") @db.VarChar(36)
+  product_name                 String                         @db.VarChar(255)
+  product_slug                 String                         @unique(map: "ux_tbl_products_slug", where: raw("([isdeleted]=(0))")) @db.VarChar(255)
+  short_description            String?                        @db.VarChar(500)
+  description                  String?                        @db.VarChar(Max)
+  base_price                   Decimal?                       @db.Decimal(18, 2)
+  currency_code                String                         @default("inr", map: "DF__tbl_produ__curre__2F9A1060") @db.VarChar(10)
+  isactive                     Boolean                        @default(true, map: "DF__tbl_produ__isact__308E3499")
+  isdeleted                    Boolean                        @default(false, map: "DF__tbl_produ__isdel__318258D2")
+  rcu                          String?                        @db.VarChar(100)
+  rcm                          DateTime                       @default(now(), map: "DF__tbl_product__rcm__32767D0B") @db.DateTime
+  luu                          String?                        @db.VarChar(100)
+  lcm                          DateTime?                      @db.DateTime
+  tbl_cart_items               tbl_cart_items[]
+  tbl_order_items              tbl_order_items[]
+  tbl_product_attribute_values tbl_product_attribute_values[]
+  tbl_product_media            tbl_product_media[]
+  tbl_product_reviews          tbl_product_reviews[]
+  tbl_product_seo              tbl_product_seo?
+  tbl_product_variants         tbl_product_variants?
+  tbl_wishlist_items           tbl_wishlist_items[]
+
+  @@index([isactive, isdeleted], map: "ix_tbl_products_active")
+}
+
+model tbl_profiles {
+  profile_id    String    @id(map: "pk_tbl_profiles") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_profi__profi__1B9317B3") @db.VarChar(36)
+  user_id       String    @db.VarChar(36)
+  fullname      String    @db.VarChar(255)
+  emailid       String    @db.VarChar(255)
+  mobile_number String?   @db.VarChar(50)
+  gender        String?   @db.VarChar(20)
+  dateofbirth   DateTime? @db.Date
+  profile_url   String?   @db.VarChar(1000)
+  lastloginat   DateTime? @db.DateTime
+  isactive      Boolean   @default(true, map: "DF__tbl_profi__isact__1C873BEC")
+  isdeleted     Boolean   @default(false, map: "DF__tbl_profi__isdel__1D7B6025")
+  rcu           String?   @db.VarChar(100)
+  rcm           DateTime  @default(now(), map: "DF__tbl_profile__rcm__1E6F845E") @db.DateTime
+  luu           String?   @db.VarChar(100)
+  lcm           DateTime? @db.DateTime
+
+  @@index([user_id], map: "ix_tbl_profiles_user", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_refunds {
+  refund_id      String        @id(map: "PK__tbl_refu__897E9EA3847B7BED") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_refun__refun__573DED66") @db.VarChar(36)
+  return_id      String        @db.VarChar(36)
+  payment_id     String?       @db.VarChar(36)
+  order_id       String        @db.VarChar(36)
+  user_id        String        @db.VarChar(36)
+  refund_type    String        @db.VarChar(50)
+  refund_status  String        @default("initiated", map: "DF__tbl_refun__refun__5832119F") @db.VarChar(50)
+  refund_amount  Decimal       @db.Decimal(18, 2)
+  refund_method  String        @db.VarChar(50)
+  transaction_id String?       @db.VarChar(100)
+  initiated_date DateTime      @default(now(), map: "DF__tbl_refun__initi__592635D8") @db.DateTime
+  processed_date DateTime?     @db.DateTime
+  completed_date DateTime?     @db.DateTime
+  failure_reason String?       @db.VarChar(500)
+  notes          String?       @db.VarChar(500)
+  isactive       Boolean       @default(true, map: "DF__tbl_refun__isact__5A1A5A11")
+  isdeleted      Boolean       @default(false, map: "DF__tbl_refun__isdel__5B0E7E4A")
+  rcu            String?       @db.VarChar(100)
+  rcm            DateTime      @default(now(), map: "DF__tbl_refunds__rcm__5C02A283") @db.DateTime
+  luu            String?       @db.VarChar(100)
+  lcm            DateTime?     @db.DateTime
+  tbl_orders     tbl_orders    @relation(fields: [order_id], references: [order_id], onUpdate: NoAction, map: "fk_tbl_refunds_order")
+  tbl_payments   tbl_payments? @relation(fields: [payment_id], references: [payment_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_refunds_payment")
+  tbl_returns    tbl_returns   @relation(fields: [return_id], references: [return_id], onUpdate: NoAction, map: "fk_tbl_refunds_return")
+
+  @@index([initiated_date], map: "ix_tbl_refunds_initiated_date", where: raw("([isdeleted]=(0))"))
+  @@index([order_id], map: "ix_tbl_refunds_order", where: raw("([isdeleted]=(0))"))
+  @@index([payment_id], map: "ix_tbl_refunds_payment", where: raw("([isdeleted]=(0))"))
+  @@index([return_id], map: "ix_tbl_refunds_return", where: raw("([isdeleted]=(0))"))
+  @@index([refund_status], map: "ix_tbl_refunds_status", where: raw("([isdeleted]=(0))"))
+  @@index([user_id], map: "ix_tbl_refunds_user", where: raw("([isdeleted]=(0))"))
+  @@index([user_id, refund_status, initiated_date], map: "ix_tbl_refunds_user_status_date", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_returns {
+  return_id          String        @id(map: "PK__tbl_retu__35C234739C6BA681") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_retur__retur__49E3F248") @db.VarChar(36)
+  order_id           String        @db.VarChar(36)
+  user_id            String        @db.VarChar(36)
+  return_type        String        @db.VarChar(50)
+  return_status      String        @default("requested", map: "DF__tbl_retur__retur__4AD81681") @db.VarChar(50)
+  return_reason      String?       @db.VarChar(500)
+  return_reason_code String?       @db.VarChar(50)
+  return_items_count Int           @default(1, map: "DF__tbl_retur__retur__4BCC3ABA")
+  return_amount      Decimal?      @db.Decimal(18, 2)
+  requested_date     DateTime      @default(now(), map: "DF__tbl_retur__reque__4CC05EF3") @db.DateTime
+  approved_date      DateTime?     @db.DateTime
+  received_date      DateTime?     @db.DateTime
+  completed_date     DateTime?     @db.DateTime
+  rma_number         String?       @unique(map: "ux_tbl_returns_rma", where: raw("([isdeleted]=(0) AND [rma_number] IS NOT NULL)")) @db.VarChar(100)
+  notes              String?       @db.VarChar(500)
+  isactive           Boolean       @default(true, map: "DF__tbl_retur__isact__4DB4832C")
+  isdeleted          Boolean       @default(false, map: "DF__tbl_retur__isdel__4EA8A765")
+  rcu                String?       @db.VarChar(100)
+  rcm                DateTime      @default(now(), map: "DF__tbl_returns__rcm__4F9CCB9E") @db.DateTime
+  luu                String?       @db.VarChar(100)
+  lcm                DateTime?     @db.DateTime
+  tbl_refunds        tbl_refunds[]
+  tbl_orders         tbl_orders    @relation(fields: [order_id], references: [order_id], onUpdate: NoAction, map: "fk_tbl_returns_order")
+
+  @@index([order_id], map: "ix_tbl_returns_order", where: raw("([isdeleted]=(0))"))
+  @@index([requested_date], map: "ix_tbl_returns_requested_date", where: raw("([isdeleted]=(0))"))
+  @@index([return_status], map: "ix_tbl_returns_status", where: raw("([isdeleted]=(0))"))
+  @@index([user_id], map: "ix_tbl_returns_user", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_review_media {
+  media_id    String      @id(map: "PK__tbl_revi__D0A840F4C3D443EE") @default("newid()", map: "DF__tbl_revie__media__7C055DC1") @db.VarChar(36)
+  review_id   String      @db.VarChar(36)
+  media_type  String      @db.VarChar(20)
+  media_url   String      @db.VarChar(500)
+  isactive    Boolean?    @default(true, map: "DF__tbl_revie__isact__7CF981FA")
+  isdeleted   Boolean?    @default(false, map: "DF__tbl_revie__isdel__7DEDA633")
+  rcu         String?     @db.VarChar(100)
+  rcm         DateTime?   @default(now(), map: "DF__tbl_review___rcm__7EE1CA6C") @db.DateTime
+  luu         String?     @db.VarChar(100)
+  lcm         DateTime?   @db.DateTime
+  tbl_reviews tbl_reviews @relation(fields: [review_id], references: [review_id], onUpdate: NoAction, map: "FK_review_media_review")
+}
+
+model tbl_review_responses {
+  review_response_id  String              @id(map: "PK__tbl_revi__D317A8EB7825EAA6") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_revie__revie__369C13AA") @db.VarChar(36)
+  product_review_id   String              @db.VarChar(36)
+  responder_user_id   String              @db.VarChar(36)
+  response_text       String?             @db.VarChar(Max)
+  response_date       DateTime            @default(now(), map: "DF__tbl_revie__respo__379037E3") @db.DateTime
+  isactive            Boolean             @default(true, map: "DF__tbl_revie__isact__38845C1C")
+  isdeleted           Boolean             @default(false, map: "DF__tbl_revie__isdel__39788055")
+  rcu                 String?             @db.VarChar(100)
+  rcm                 DateTime            @default(now(), map: "DF__tbl_review___rcm__3A6CA48E") @db.DateTime
+  luu                 String?             @db.VarChar(100)
+  lcm                 DateTime?           @db.DateTime
+  tbl_product_reviews tbl_product_reviews @relation(fields: [product_review_id], references: [product_review_id], onUpdate: NoAction, map: "fk_tbl_review_responses_review")
+  tbl_users           tbl_users           @relation(fields: [responder_user_id], references: [user_id], onUpdate: NoAction, map: "fk_tbl_review_responses_user")
+
+  @@index([product_review_id], map: "ix_tbl_review_responses_review", where: raw("([isdeleted]=(0))"))
+  @@index([responder_user_id], map: "ix_tbl_review_responses_user", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_review_votes {
+  vote_id     String      @id(map: "PK__tbl_revi__9F5405AE6C590472") @default("newid()", map: "DF__tbl_revie__vote___03A67F89") @db.VarChar(36)
+  review_id   String      @db.VarChar(36)
+  user_id     String      @db.VarChar(36)
+  is_helpful  Boolean
+  isactive    Boolean?    @default(true, map: "DF__tbl_revie__isact__049AA3C2")
+  isdeleted   Boolean?    @default(false, map: "DF__tbl_revie__isdel__058EC7FB")
+  rcu         String?     @db.VarChar(100)
+  rcm         DateTime?   @default(now(), map: "DF__tbl_review___rcm__0682EC34") @db.DateTime
+  luu         String?     @db.VarChar(100)
+  lcm         DateTime?   @db.DateTime
+  tbl_reviews tbl_reviews @relation(fields: [review_id], references: [review_id], onUpdate: NoAction, map: "FK_review_votes_review")
+
+  @@unique([review_id, user_id], map: "UQ_review_vote")
+  @@index([review_id], map: "idx_review_votes_review")
+}
+
+model tbl_reviews {
+  review_id        String             @id(map: "PK__tbl_revi__60883D905A08A3A7") @default("newid()", map: "DF__tbl_revie__revie__737017C0") @db.VarChar(36)
+  product_id       String             @db.VarChar(36)
+  variant_id       String?            @db.VarChar(36)
+  user_id          String             @db.VarChar(36)
+  rating           Int
+  review_title     String?            @db.VarChar(255)
+  review_text      String?            @db.VarChar(Max)
+  is_verified      Boolean?           @default(false, map: "DF__tbl_revie__is_ve__75586032")
+  is_approved      Boolean?           @default(true, map: "DF__tbl_revie__is_ap__764C846B")
+  isactive         Boolean?           @default(true, map: "DF__tbl_revie__isact__7740A8A4")
+  isdeleted        Boolean?           @default(false, map: "DF__tbl_revie__isdel__7834CCDD")
+  rcu              String?            @db.VarChar(100)
+  rcm              DateTime?          @default(now(), map: "DF__tbl_reviews__rcm__7928F116") @db.DateTime
+  luu              String?            @db.VarChar(100)
+  lcm              DateTime?          @db.DateTime
+  tbl_review_media tbl_review_media[]
+  tbl_review_votes tbl_review_votes[]
+
+  @@index([product_id], map: "idx_reviews_product")
+  @@index([user_id], map: "idx_reviews_user")
+  @@index([variant_id], map: "idx_reviews_variant")
+}
+
+model tbl_roles {
+  role_id        String           @id(map: "pk_tbl_roles") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_roles__role___29221CFB") @db.VarChar(36)
+  role_name      String           @db.VarChar(100)
+  role_code      String           @unique(map: "ux_tbl_roles_role_code", where: raw("([isdeleted]=(0))")) @db.VarChar(50)
+  description    String?          @db.VarChar(255)
+  isactive       Boolean          @default(true, map: "DF__tbl_roles__isact__2A164134")
+  isdeleted      Boolean          @default(false, map: "DF__tbl_roles__isdel__2B0A656D")
+  rcu            String?          @db.VarChar(100)
+  rcm            DateTime         @default(now(), map: "DF__tbl_roles__rcm__2BFE89A6") @db.DateTime
+  luu            String?          @db.VarChar(100)
+  lcm            DateTime?        @db.DateTime
+  tbl_user_roles tbl_user_roles[]
+
+  @@index([isactive, isdeleted], map: "ix_tbl_roles_active")
+  @@index([role_code], map: "ix_tbl_roles_code", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_running_bar_items {
+  running_bar_item_id String           @id(map: "pk_tbl_running_bar_items") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_runni__runni__41EDCAC5") @db.VarChar(36)
+  running_bar_id      String           @db.VarChar(36)
+  itemsdata           String           @db.VarChar(Max)
+  duration_seconds    Int              @default(5, map: "DF__tbl_runni__durat__42E1EEFE")
+  display_order       Int              @default(1, map: "DF__tbl_runni__displ__43D61337")
+  isactive            Boolean          @default(true, map: "DF__tbl_runni__isact__44CA3770")
+  isdeleted           Boolean          @default(false, map: "DF__tbl_runni__isdel__45BE5BA9")
+  rcu                 String?          @db.VarChar(100)
+  rcm                 DateTime         @default(now(), map: "DF__tbl_running__rcm__46B27FE2") @db.DateTime
+  luu                 String?          @db.VarChar(100)
+  lcm                 DateTime?        @db.DateTime
+  tbl_running_bars    tbl_running_bars @relation(fields: [running_bar_id], references: [running_bar_id], onUpdate: NoAction, map: "fk_tbl_running_bar_items_bar")
+}
+
+model tbl_running_bars {
+  running_bar_id        String                  @id(map: "pk_tbl_running_bars") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_runni__runni__3C34F16F") @db.VarChar(36)
+  running_bar_name      String                  @db.VarChar(255)
+  isactive              Boolean                 @default(true, map: "DF__tbl_runni__isact__3D2915A8")
+  isdeleted             Boolean                 @default(false, map: "DF__tbl_runni__isdel__3E1D39E1")
+  rcu                   String?                 @db.VarChar(100)
+  rcm                   DateTime                @default(now(), map: "DF__tbl_running__rcm__3F115E1A") @db.DateTime
+  luu                   String?                 @db.VarChar(100)
+  lcm                   DateTime?               @db.DateTime
+  tbl_running_bar_items tbl_running_bar_items[]
+}
+
+model tbl_settings {
+  setting_id             String    @id(map: "PK_tbl_settings") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_setti__setti__7A521F79") @db.VarChar(36)
+  site_name              String?   @db.VarChar(255)
+  header_logo_url        String?   @db.VarChar(1000)
+  brand_logo_url         String?   @db.VarChar(1000)
+  footer_logo_url        String?   @db.VarChar(1000)
+  brand_description      String?   @db.VarChar(Max)
+  newsletter_title       String?   @db.VarChar(255)
+  newsletter_description String?   @db.VarChar(Max)
+  ismaintenance_mode     Boolean   @default(false, map: "DF__tbl_setti__ismai__7B4643B2")
+  isactive               Boolean   @default(true, map: "DF__tbl_setti__isact__7C3A67EB")
+  isdeleted              Boolean   @default(false, map: "DF__tbl_setti__isdel__7D2E8C24")
+  rcu                    String?   @db.VarChar(100)
+  rcm                    DateTime  @default(now(), map: "DF__tbl_setting__rcm__7E22B05D") @db.DateTime
+  luu                    String?   @db.VarChar(100)
+  lcm                    DateTime? @db.DateTime
+
+  @@index([isactive, isdeleted], map: "ix_tbl_settings_active")
+}
+
+model tbl_shipment_events {
+  shipment_event_id String    @id(map: "PK__tbl_ship__1F365B12A23DBBBE") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_shipm__shipm__414EAC47") @db.VarChar(36)
+  shipment_id       String    @db.VarChar(36)
+  event_status      String    @db.VarChar(50)
+  event_location    String?   @db.VarChar(255)
+  event_description String?   @db.VarChar(500)
+  event_timestamp   DateTime  @default(now(), map: "DF__tbl_shipm__event__4242D080") @db.DateTime
+  event_source      String?   @db.VarChar(50)
+  isactive          Boolean   @default(true, map: "DF__tbl_shipm__isact__4336F4B9")
+  isdeleted         Boolean   @default(false, map: "DF__tbl_shipm__isdel__442B18F2")
+  rcu               String?   @db.VarChar(100)
+  rcm               DateTime  @default(now(), map: "DF__tbl_shipmen__rcm__451F3D2B") @db.DateTime
+  luu               String?   @db.VarChar(100)
+  lcm               DateTime? @db.DateTime
+
+  @@index([shipment_id, event_timestamp], map: "ix_tbl_shipment_events_shipment_time", where: raw("([isdeleted]=(0))"))
+  @@index([event_timestamp], map: "ix_tbl_shipment_events_timestamp", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_shipments {
+  shipment_id          String               @id(map: "PK__tbl_ship__41466E593D1A3ABF") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_shipm__shipm__19FFD4FC") @db.VarChar(36)
+  order_id             String               @db.VarChar(36)
+  courier_partner_id   String               @db.VarChar(36)
+  tracking_number      String?              @unique(map: "ux_tbl_shipments_tracking", where: raw("([isdeleted]=(0) AND [tracking_number] IS NOT NULL)")) @db.VarChar(100)
+  awb_number           String?              @db.VarChar(100)
+  shipment_status      String               @default("pending", map: "DF__tbl_shipm__shipm__1AF3F935") @db.VarChar(50)
+  weight               Decimal?             @db.Decimal(18, 2)
+  dimensions           String?              @db.VarChar(100)
+  shipped_date         DateTime?            @db.DateTime
+  estimated_delivery   DateTime?            @db.DateTime
+  actual_delivery_date DateTime?            @db.DateTime
+  pickup_address_id    String?              @db.VarChar(36)
+  drop_address_id      String?              @db.VarChar(36)
+  shipping_cost        Decimal?             @db.Decimal(18, 2)
+  notes                String?              @db.VarChar(500)
+  isactive             Boolean              @default(true, map: "DF__tbl_shipm__isact__1BE81D6E")
+  isdeleted            Boolean              @default(false, map: "DF__tbl_shipm__isdel__1CDC41A7")
+  rcu                  String?              @db.VarChar(100)
+  rcm                  DateTime             @default(now(), map: "DF__tbl_shipmen__rcm__1DD065E0") @db.DateTime
+  luu                  String?              @db.VarChar(100)
+  lcm                  DateTime?            @db.DateTime
+  tbl_courier_partners tbl_courier_partners @relation(fields: [courier_partner_id], references: [courier_partner_id], onUpdate: NoAction, map: "fk_tbl_shipments_courier")
+  tbl_orders           tbl_orders           @relation(fields: [order_id], references: [order_id], onUpdate: NoAction, map: "fk_tbl_shipments_order")
+
+  @@index([courier_partner_id], map: "ix_tbl_shipments_courier", where: raw("([isdeleted]=(0))"))
+  @@index([order_id], map: "ix_tbl_shipments_order", where: raw("([isdeleted]=(0))"))
+  @@index([shipped_date], map: "ix_tbl_shipments_shipped_date", where: raw("([isdeleted]=(0))"))
+  @@index([shipment_status], map: "ix_tbl_shipments_status", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_sizes {
+  size_id              String                 @id(map: "pk_tbl_sizes") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_sizes__size___3552E9B6") @db.VarChar(36)
+  size_name            String                 @db.VarChar(50)
+  size_type            String                 @db.VarChar(20)
+  display_order        Int                    @default(1, map: "DF__tbl_sizes__displ__36470DEF")
+  isactive             Boolean                @default(true, map: "DF__tbl_sizes__isact__373B3228")
+  isdeleted            Boolean                @default(false, map: "DF__tbl_sizes__isdel__382F5661")
+  rcu                  String?                @db.VarChar(100)
+  rcm                  DateTime               @default(now(), map: "DF__tbl_sizes__rcm__39237A9A") @db.DateTime
+  luu                  String?                @db.VarChar(100)
+  lcm                  DateTime?              @db.DateTime
+  tbl_product_variants tbl_product_variants[]
+
+  @@unique([size_name, size_type], map: "ux_tbl_sizes_name_type", where: raw("([isdeleted]=(0))"))
+  @@index([size_type, display_order], map: "ix_tbl_sizes_type_order", where: raw("([isdeleted]=(0))"))
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbl_spotlight_entries {
+  spotlight_entry_id String?   @default("newid()", map: "DF__tbl_spotl__spotl__1BB31344") @db.VarChar(36)
+  title              String?   @db.VarChar(Max)
+  subtitle           String?   @db.VarChar(Max)
+  description        String?   @db.VarChar(Max)
+  redirect_link      String?   @db.VarChar(Max)
+  cta_text           String?   @default("shop now/explore", map: "DF__tbl_spotl__cta_t__1CA7377D") @db.VarChar(100)
+  display_order      Int?      @default(1, map: "DF__tbl_spotl__displ__1D9B5BB6")
+  isactive           Boolean?  @default(true, map: "DF__tbl_spotl__isact__1E8F7FEF")
+  isdeleted          Boolean?  @default(false, map: "DF__tbl_spotl__isdel__1F83A428")
+  rcu                String?   @db.VarChar(100)
+  rcm                DateTime? @default(now(), map: "DF__tbl_spotlig__rcm__2077C861") @db.DateTime
+  luu                String?   @db.VarChar(100)
+  lcm                DateTime? @db.DateTime
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbl_spotlight_media {
+  spotlight_media_id String?   @default("newid()", map: "DF__tbl_spotl__spotl__226010D3") @db.VarChar(36)
+  spotlight_entry_id String?   @db.VarChar(36)
+  media_type         String?   @db.VarChar(20)
+  media_url          String?   @db.VarChar(Max)
+  alt_text           String?   @db.VarChar(Max)
+  display_order      Int?      @default(1, map: "DF__tbl_spotl__displ__2354350C")
+  isprimary          Boolean?  @default(false, map: "DF__tbl_spotl__ispri__24485945")
+  isactive           Boolean?  @default(true, map: "DF__tbl_spotl__isact__253C7D7E")
+  isdeleted          Boolean?  @default(false, map: "DF__tbl_spotl__isdel__2630A1B7")
+  rcu                String?   @db.VarChar(Max)
+  rcm                DateTime? @default(now(), map: "DF__tbl_spotlig__rcm__2724C5F0") @db.DateTime
+  luu                String?   @db.VarChar(Max)
+  lcm                DateTime? @db.DateTime
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbl_style_collection_media {
+  style_collection_media_id String?   @default("newid()", map: "DF__tbl_style__style__2EC5E7B8") @db.VarChar(36)
+  style_collection_id       String?   @db.VarChar(36)
+  media_type                String?   @db.VarChar(20)
+  media_url                 String?   @db.VarChar(Max)
+  alt_text                  String?   @db.VarChar(Max)
+  display_order             Int?      @default(1, map: "DF__tbl_style__displ__2FBA0BF1")
+  isprimary                 Boolean?  @default(false, map: "DF__tbl_style__ispri__30AE302A")
+  isactive                  Boolean?  @default(true, map: "DF__tbl_style__isact__31A25463")
+  isdeleted                 Boolean?  @default(false, map: "DF__tbl_style__isdel__3296789C")
+  rcu                       String?   @db.VarChar(Max)
+  rcm                       DateTime? @default(now(), map: "DF__tbl_style_c__rcm__338A9CD5") @db.DateTime
+  luu                       String?   @db.VarChar(Max)
+  lcm                       DateTime? @db.DateTime
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbl_style_collections {
+  style_collection_id String?   @default("newid()", map: "DF__tbl_style__style__290D0E62") @db.VarChar(36)
+  collection_name     String?   @db.VarChar(Max)
+  collection_slug     String?   @db.VarChar(Max)
+  description         String?   @db.VarChar(Max)
+  redirect_link       String?   @db.VarChar(Max)
+  cta_text            String?   @db.VarChar(Max)
+  display_order       Int?      @default(1, map: "DF__tbl_style__displ__2A01329B")
+  isactive            Boolean?  @default(true, map: "DF__tbl_style__isact__2AF556D4")
+  isdeleted           Boolean?  @default(false, map: "DF__tbl_style__isdel__2BE97B0D")
+  rcu                 String?   @db.VarChar(Max)
+  rcm                 DateTime? @default(now(), map: "DF__tbl_style_c__rcm__2CDD9F46") @db.DateTime
+  luu                 String?   @db.VarChar(Max)
+  lcm                 DateTime? @db.DateTime
+
+  @@ignore
+}
+
+model tbl_support_contacts {
+  support_contact_id String    @id(map: "PK_tbl_support_contacts") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_suppo__suppo__65570293") @db.VarChar(36)
+  contact_title      String?   @db.VarChar(255)
+  contact_name       String?   @db.VarChar(255)
+  contact_email      String?   @db.VarChar(255)
+  contact_number     String?   @db.VarChar(50)
+  whatsapp_number    String?   @db.VarChar(50)
+  address_text       String?   @db.VarChar(500)
+  working_hours      String?   @db.VarChar(255)
+  isactive           Boolean   @default(true, map: "DF__tbl_suppo__isact__664B26CC")
+  isdeleted          Boolean   @default(false, map: "DF__tbl_suppo__isdel__673F4B05")
+  rcu                String?   @db.VarChar(100)
+  rcm                DateTime  @default(now(), map: "DF__tbl_support__rcm__68336F3E") @db.DateTime
+  luu                String?   @db.VarChar(100)
+  lcm                DateTime? @db.DateTime
+
+  @@index([isactive, isdeleted], map: "ix_tbl_support_contacts_active")
+  @@index([contact_email], map: "ix_tbl_support_contacts_email")
+  @@index([contact_number], map: "ix_tbl_support_contacts_phone")
+}
+
+model tbl_user_roles {
+  user_role_id String    @id(map: "pk_tbl_user_roles") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_user___user___2FCF1A8A") @db.VarChar(36)
+  user_id      String    @db.VarChar(36)
+  role_id      String    @db.VarChar(36)
+  assigned_at  DateTime  @default(now(), map: "DF__tbl_user___assig__30C33EC3") @db.DateTime
+  isactive     Boolean   @default(true, map: "DF__tbl_user___isact__31B762FC")
+  isdeleted    Boolean   @default(false, map: "DF__tbl_user___isdel__32AB8735")
+  rcu          String?   @db.VarChar(100)
+  rcm          DateTime  @default(now(), map: "DF__tbl_user_ro__rcm__339FAB6E") @db.DateTime
+  luu          String?   @db.VarChar(100)
+  lcm          DateTime? @db.DateTime
+  tbl_roles    tbl_roles @relation(fields: [role_id], references: [role_id], onUpdate: NoAction, map: "fk_tbl_user_roles_role")
+
+  @@unique([user_id, role_id], map: "ux_tbl_user_roles_unique", where: raw("([isdeleted]=(0))"))
+  @@index([role_id], map: "ix_tbl_user_roles_role", where: raw("([isdeleted]=(0))"))
+  @@index([user_id], map: "ix_tbl_user_roles_user", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_users {
+  user_id                      String                         @id(map: "PK__tbl_user__B9BE370F0E7453B1") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_users__user___68687968") @db.VarChar(36)
+  email                        String                         @unique(map: "ux_tbl_users_email") @db.VarChar(255)
+  phone_number                 String?                        @db.VarChar(20)
+  first_name                   String?                        @db.VarChar(100)
+  last_name                    String?                        @db.VarChar(100)
+  full_name                    String?                        @db.VarChar(255)
+  password_hash                String?                        @db.VarChar(500)
+  password_salt                String?                        @db.VarChar(500)
+  profile_picture_url          String?                        @db.VarChar(1000)
+  email_verified               Boolean                        @default(false, map: "DF__tbl_users__email__695C9DA1")
+  email_verified_at            DateTime?                      @db.DateTime
+  phone_verified               Boolean                        @default(false, map: "DF__tbl_users__phone__6A50C1DA")
+  phone_verified_at            DateTime?                      @db.DateTime
+  last_login                   DateTime?                      @db.DateTime
+  isactive                     Boolean                        @default(true, map: "DF__tbl_users__isact__6B44E613")
+  isdeleted                    Boolean                        @default(false, map: "DF__tbl_users__isdel__6C390A4C")
+  rcu                          String?                        @db.VarChar(100)
+  rcm                          DateTime                       @default(now(), map: "DF__tbl_users__rcm__6D2D2E85") @db.DateTime
+  luu                          String?                        @db.VarChar(100)
+  lcm                          DateTime?                      @db.DateTime
+  tbl_customer_profiles        tbl_customer_profiles?
+  tbl_newsletter_subscriptions tbl_newsletter_subscriptions[]
+  tbl_product_reviews          tbl_product_reviews[]
+  tbl_review_responses         tbl_review_responses[]
+
+  @@index([email], map: "ix_tbl_users_email", where: raw("([isdeleted]=(0))"))
+  @@index([last_login], map: "ix_tbl_users_last_login", where: raw("([isdeleted]=(0))"))
+  @@index([phone_number], map: "ix_tbl_users_phone", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_variant_rating_summary {
+  variant_id    String    @id(map: "PK__tbl_vari__EACC68B779E7C5F9") @db.VarChar(36)
+  avg_rating    Decimal?  @default(0, map: "DF__tbl_varia__avg_r__13DCE752") @db.Decimal(3, 2)
+  total_reviews Int?      @default(0, map: "DF__tbl_varia__total__14D10B8B")
+  rcu           String?   @db.VarChar(100)
+  rcm           DateTime? @default(now(), map: "DF__tbl_variant__rcm__15C52FC4") @db.DateTime
+  luu           String?   @db.VarChar(100)
+  lcm           DateTime? @db.DateTime
+}
+
+model tbl_wishlist_items {
+  wishlist_item_id     String                @id(map: "PK__tbl_wish__190EBE2840AB6F5C") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_wishl__wishl__15A53433") @db.VarChar(36)
+  wishlist_id          String                @db.VarChar(36)
+  product_id           String                @db.VarChar(36)
+  product_variant_id   String?               @db.VarChar(36)
+  added_at             DateTime              @default(now(), map: "DF__tbl_wishl__added__1699586C") @db.DateTime
+  isactive             Boolean               @default(true, map: "DF__tbl_wishl__isact__178D7CA5")
+  isdeleted            Boolean               @default(false, map: "DF__tbl_wishl__isdel__1881A0DE")
+  rcu                  String?               @db.VarChar(100)
+  rcm                  DateTime              @default(now(), map: "DF__tbl_wishlis__rcm__1975C517") @db.DateTime
+  luu                  String?               @db.VarChar(100)
+  lcm                  DateTime?             @db.DateTime
+  tbl_products         tbl_products          @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_wishlist_items_product")
+  tbl_product_variants tbl_product_variants? @relation(fields: [product_variant_id], references: [product_variant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_wishlist_items_variant")
+  tbl_wishlists        tbl_wishlists         @relation(fields: [wishlist_id], references: [wishlist_id], onUpdate: NoAction, map: "fk_tbl_wishlist_items_wishlist")
+
+  @@unique([wishlist_id, product_id, product_variant_id], map: "ux_tbl_wishlist_items_unique", where: raw("([isdeleted]=(0))"))
+  @@index([product_id], map: "ix_tbl_wishlist_items_product", where: raw("([isdeleted]=(0))"))
+  @@index([product_variant_id], map: "ix_tbl_wishlist_items_variant", where: raw("([isdeleted]=(0))"))
+  @@index([wishlist_id], map: "ix_tbl_wishlist_items_wishlist", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_wishlists {
+  wishlist_id        String               @id(map: "PK__tbl_wish__6151514E28648F38") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_wishl__wishl__0E04126B") @db.VarChar(36)
+  user_id            String               @db.VarChar(36)
+  wishlist_name      String               @default("my wishlist", map: "DF__tbl_wishl__wishl__0EF836A4") @db.VarChar(255)
+  isactive           Boolean              @default(true, map: "DF__tbl_wishl__isact__0FEC5ADD")
+  isdeleted          Boolean              @default(false, map: "DF__tbl_wishl__isdel__10E07F16")
+  rcu                String?              @db.VarChar(100)
+  rcm                DateTime             @default(now(), map: "DF__tbl_wishlis__rcm__11D4A34F") @db.DateTime
+  luu                String?              @db.VarChar(100)
+  lcm                DateTime?            @db.DateTime
+  tbl_wishlist_items tbl_wishlist_items[]
+
+  @@index([user_id], map: "ix_tbl_wishlists_user", where: raw("([isdeleted]=(0))"))
+}

@@ -1,0 +1,103 @@
+{
+  "meta": {
+    "format": "httpie",
+    "version": "1.0.0",
+    "contentType": "collection",
+    "schema": "https://schema.httpie.io/1.0.0.json"
+  },
+  "entry": {
+    "name": "Review Media",
+    "auth": { "type": "none" },
+    "requests": [
+      {
+        "name": "GET ALL",
+        "url": "{{P}}/review-media",
+        "method": "GET",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "none",
+          "file": { "name": "" },
+          "text": { "value": "", "format": "application/json" },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "GET BY ID",
+        "url": "{{P}}/review-media/1",
+        "method": "GET",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "none",
+          "file": { "name": "" },
+          "text": { "value": "", "format": "application/json" },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "POST",
+        "url": "{{P}}/review-media",
+        "method": "POST",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"review_id\": \"rev_001\",\n  \"media_type\": \"image\",\n  \"media_url\": \"https://cdn.com/img.jpg\",\n  \"rcu\": \"admin\"\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "PUT",
+        "url": "{{P}}/review-media",
+        "method": "PUT",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"media_id\": 1,\n  \"media_type\": \"video\",\n  \"media_url\": \"https://cdn.com/video.mp4\",\n  \"luu\": \"admin\"\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "DELETE",
+        "url": "{{P}}/review-media",
+        "method": "DELETE",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"media_id\": 1\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      }
+    ]
+  }
+}

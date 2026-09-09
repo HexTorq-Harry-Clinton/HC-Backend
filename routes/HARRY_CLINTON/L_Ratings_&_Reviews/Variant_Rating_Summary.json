@@ -1,0 +1,103 @@
+{
+  "meta": {
+    "format": "httpie",
+    "version": "1.0.0",
+    "contentType": "collection",
+    "schema": "https://schema.httpie.io/1.0.0.json"
+  },
+  "entry": {
+    "name": "Variant Rating Summary",
+    "auth": { "type": "none" },
+    "requests": [
+      {
+        "name": "GET ALL",
+        "url": "{{P}}/variant-rating-summary",
+        "method": "GET",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "none",
+          "file": { "name": "" },
+          "text": { "value": "", "format": "application/json" },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "GET BY ID",
+        "url": "{{P}}/variant-rating-summary/var_001",
+        "method": "GET",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "none",
+          "file": { "name": "" },
+          "text": { "value": "", "format": "application/json" },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "POST",
+        "url": "{{P}}/variant-rating-summary",
+        "method": "POST",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"variant_id\": \"var_001\",\n  \"avg_rating\": 4.2,\n  \"total_reviews\": 5,\n  \"rcu\": \"admin\"\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "PUT",
+        "url": "{{P}}/variant-rating-summary",
+        "method": "PUT",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"variant_id\": \"var_001\",\n  \"avg_rating\": 4.4,\n  \"total_reviews\": 6,\n  \"luu\": \"admin\"\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "DELETE",
+        "url": "{{P}}/variant-rating-summary",
+        "method": "DELETE",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"variant_id\": \"var_001\"\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      }
+    ]
+  }
+}

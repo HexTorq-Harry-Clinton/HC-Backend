@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "format": "httpie",
+    "version": "1.0.0",
+    "contentType": "collection",
+    "schema": "https://schema.httpie.io/1.0.0.json"
+  },
+  "entry": {
+    "name": "Reviews",
+    "auth": {
+      "type": "none"
+    },
+    "requests": [
+      {
+        "name": "GET ALL",
+        "url": "{{P}}/reviews",
+        "method": "GET",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "none",
+          "file": { "name": "" },
+          "text": { "value": "", "format": "application/json" },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "GET BY ID",
+        "url": "{{P}}/reviews/1",
+        "method": "GET",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "none",
+          "file": { "name": "" },
+          "text": { "value": "", "format": "application/json" },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "POST",
+        "url": "{{P}}/reviews",
+        "method": "POST",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"product_id\": \"prod_001\",\n  \"variant_id\": \"var_001\",\n  \"user_id\": \"user_001\",\n  \"rating\": 5,\n  \"review_title\": \"Excellent\",\n  \"review_text\": \"Very good product\",\n  \"is_verified\": 1,\n  \"rcu\": \"admin\"\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "PUT",
+        "url": "{{P}}/reviews",
+        "method": "PUT",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"review_id\": 1,\n  \"rating\": 4,\n  \"review_title\": \"Good\",\n  \"review_text\": \"Updated review\",\n  \"is_approved\": 1,\n  \"luu\": \"admin\"\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      },
+      {
+        "name": "DELETE",
+        "url": "{{P}}/reviews",
+        "method": "DELETE",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": { "type": "inherited" },
+        "body": {
+          "type": "text",
+          "file": { "name": "" },
+          "text": {
+            "value": "{\n  \"review_id\": 1\n}",
+            "format": "application/json"
+          },
+          "form": { "isMultipart": false, "fields": [] },
+          "graphql": { "query": "", "variables": "" }
+        }
+      }
+    ]
+  }
+}
