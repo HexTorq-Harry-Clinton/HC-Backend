@@ -9,18 +9,13 @@ const morgan = require("morgan");
 
 const app = express();
 
-const DEFAULT_ALLOWED_ORIGINS = [
-  "https://harryclinton.in",
-  "https://www.harryclinton.in",
-  "http://localhost:3000",
-];
-
-const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS || "")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
-const allowedOrigins = ALLOWED_ORIGINS.length ? ALLOWED_ORIGINS : DEFAULT_ALLOWED_ORIGINS;
+// PIPELINE MODE: allow all origins (Vercel previews, prod domain, tooling).
+// `origin: true` reflects the request origin, which keeps `credentials: true`
+// valid (a literal "*" would break credentialed requests).
+const corsOptions = {
+  origin: true,
+  credentials: true,
+};
 
 app.use(helmet({
   // CSP is disabled because /api-tester serves its own static HTML/JS tool;
@@ -30,16 +25,7 @@ app.use(helmet({
 
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
-app.use(cors({
-  origin(origin, callback) {
-    // allow non-browser requests (curl, server-to-server, the httpie/api-tester tool)
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error(`CORS: origin not allowed: ${origin}`));
-  },
-  credentials: true,
-}));
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
