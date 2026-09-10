@@ -106,14 +106,14 @@ router.get('/', async (req, res) => {
 
     const dateSlotId = req.query.appointment_date_slot_id ? String(req.query.appointment_date_slot_id).trim() : null;
     const onlyAvailable = req.query.onlyAvailable === '1' || req.query.onlyAvailable === 'true';
-    const onlyUnबुकed = req.query.onlyUnbooked === '1' || req.query.onlyUnbooked === 'true';
+    const onlyUnbooked = req.query.onlyUnbooked === '1' || req.query.onlyUnbooked === 'true';
 
     const where = [];
     if (!includeDeleted) where.push('isdeleted = 0');
     if (!includeInactive) where.push('isactive = 1');
     if (dateSlotId) where.push('appointment_date_slot_id = @appointment_date_slot_id');
     if (onlyAvailable) where.push('isavailable = 1');
-    if (onlyUnबुकed) where.push('isbooked = 0');
+    if (onlyUnbooked) where.push('isbooked = 0');
 
     const request = pool.request();
     if (dateSlotId) request.input('appointment_date_slot_id', FIELD_TYPES.appointment_date_slot_id.type, dateSlotId);
