@@ -228,9 +228,11 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // discount_priority is NOT NULL in the DB - default to 1 if not provided
-    if (data.discount_priority == null) {
-      data.discount_priority = 1;
+    // discount_priority is NOT NULL in the DB - default to 1 if not provided.
+    // (Local copy: never mutate req.body — callers may log/reuse it.)
+    const effective = { ...data };
+    if (effective.discount_priority == null) {
+      effective.discount_priority = 1;
     }
 
     const cols = [];
@@ -238,8 +240,8 @@ router.post('/', async (req, res) => {
     const request = pool.request();
 
     INSERT_FIELDS.forEach((f) => {
-      if (data[f] != null) {
-        const v = prepareInputValue(f, data[f]);
+      if (effective[f] != null) {
+        const v = prepareInputValue(f, effective[f]);
         if (v !== null) {
           cols.push(f);
           vals.push('@' + f);
