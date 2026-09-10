@@ -76,11 +76,6 @@ const prepareInputValue = (field, value) => {
     return null;
   }
 
-  if (field === 'display_order') {
-    const num = parseInt(value, 10);
-    return !isNaN(num) && num > 0 ? num : null;
-  }
-
   return typeof value === 'string' ? value.trim() : value;
 };
 
