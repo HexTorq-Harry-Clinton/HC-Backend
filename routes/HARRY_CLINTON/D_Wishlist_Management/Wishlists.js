@@ -231,7 +231,8 @@ router.put('/', async (req, res) => {
     const result = await request.query(`
       UPDATE dbo.tbl_wishlists
       SET ${updates.join(', ')}
-      WHERE wishlist_id = @wishlist_id;
+      WHERE wishlist_id = @wishlist_id
+        AND isdeleted = 0;
 
       SELECT @@ROWCOUNT AS affected;
     `);
@@ -281,7 +282,8 @@ router.delete('/', async (req, res) => {
       SET isdeleted = 1,
           ${luu ? 'luu = @luu,' : ''}
           lcm = ${IST_NOW_SQL}
-      WHERE wishlist_id = @wishlist_id;
+      WHERE wishlist_id = @wishlist_id
+        AND isdeleted = 0;
 
       SELECT @@ROWCOUNT AS affected;
     `;

@@ -253,7 +253,8 @@ router.put('/', async (req, res) => {
     const result = await request.query(`
       UPDATE dbo.tbl_carts
       SET ${updates.join(', ')}
-      WHERE cart_id = @cart_id;
+      WHERE cart_id = @cart_id
+        AND isdeleted = 0;
 
       SELECT @@ROWCOUNT AS affected;
     `);
@@ -303,7 +304,8 @@ router.delete('/', async (req, res) => {
       SET isdeleted = 1,
           ${luu ? 'luu = @luu,' : ''}
           lcm = ${IST_NOW_SQL}
-      WHERE cart_id = @cart_id;
+      WHERE cart_id = @cart_id
+        AND isdeleted = 0;
 
       SELECT @@ROWCOUNT AS affected;
     `;
