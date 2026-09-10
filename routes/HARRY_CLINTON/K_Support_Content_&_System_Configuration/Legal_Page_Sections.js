@@ -373,58 +373,12 @@ router.put('/', async (req, res) => {
 ========================================= */
 
 router.delete('/', async (req, res) => {
-
-  try {
-
-    const { id } = req.body;
-
-    if (!id) {
-
-      return res.status(400).json({
-        success: false,
-        message: 'id required'
-      });
-
-    }
-
-    await poolConnect;
-
-    const request = pool
-      .request()
-      .input('id', FIELD_TYPES.id.type, id);
-
-    const result = await request.query(`
-      DELETE FROM dbo.tbl_legal_page_sections
-      WHERE id = @id;
-
-      SELECT @@ROWCOUNT AS affected;
-    `);
-
-    if (result.recordset[0].affected === 0) {
-
-      return res.status(404).json({
-        success: false,
-        message: 'Record not found'
-      });
-
-    }
-
-    res.json({
-      success: true,
-      message: 'Record deleted'
-    });
-
-  } catch (err) {
-
-    console.error('LegalPageSections DELETE error:', err);
-
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
-
-  }
-
+  // Legal history must never vanish: hard deletes are disabled.
+  // Deactivate the section instead via PUT { id, is_active: 0 }.
+  return res.status(403).json({
+    success: false,
+    message: 'Legal sections cannot be deleted. Deactivate them instead (PUT is_active = 0).'
+  });
 });
 
 module.exports = router;
