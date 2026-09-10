@@ -222,6 +222,10 @@ router.post('/', async (req, res) => {
       }
     });
 
+    // enforce defaults
+    cols.push('isactive', 'isdeleted', 'rcm');
+    vals.push('1', '0', IST_NOW_SQL);
+
     await poolConnect;
 
     try {

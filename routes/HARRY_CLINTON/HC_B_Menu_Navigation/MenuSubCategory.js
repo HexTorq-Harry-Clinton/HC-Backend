@@ -163,6 +163,10 @@ router.post('/', async (req, res) => {
 
     if (cols.length === 0) return res.status(400).json({ success: false, message: 'No valid fields' });
 
+    // enforce defaults
+    cols.push('isactive', 'isdeleted', 'rcm');
+    vals.push('1', '0', DATEADD(MINUTE, 330, GETUTCDATE()));
+
     await poolConnect;
 
     const result = await request.query(

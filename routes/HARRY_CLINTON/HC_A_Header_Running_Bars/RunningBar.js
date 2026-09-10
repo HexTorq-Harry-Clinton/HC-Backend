@@ -145,6 +145,10 @@ router.post('/', async (req, res) => {
 
     await poolConnect;
 
+    // enforce defaults
+    cols.push('isactive', 'isdeleted', 'rcm');
+    vals.push('1', '0', DATEADD(MINUTE, 330, GETUTCDATE()));
+
     const result = await request.query(
       `INSERT INTO dbo.tbl_running_bars (${cols.join(',')})
        OUTPUT INSERTED.*
@@ -193,6 +197,10 @@ router.put('/', async (req, res) => {
 
     await poolConnect;
 
+    // enforce defaults
+    cols.push('isactive', 'isdeleted', 'rcm');
+    vals.push('1', '0', DATEADD(MINUTE, 330, GETUTCDATE()));
+
     const result = await request.query(
       `UPDATE dbo.tbl_running_bars
        SET ${updates.join(', ')}
@@ -224,6 +232,10 @@ router.delete('/', async (req, res) => {
     }
 
     await poolConnect;
+
+    // enforce defaults
+    cols.push('isactive', 'isdeleted', 'rcm');
+    vals.push('1', '0', DATEADD(MINUTE, 330, GETUTCDATE()));
 
     const request = pool.request().input('running_bar_id', FIELD_TYPES.running_bar_id.type, running_bar_id);
 

@@ -143,6 +143,10 @@ router.post('/', async (req, res) => {
 
     await poolConnect;
 
+    // enforce defaults
+    cols.push('isactive', 'isdeleted', 'rcm');
+    vals.push('1', '0', DATEADD(MINUTE, 330, GETUTCDATE()));
+
     const result = await request.query(
       `INSERT INTO dbo.tbl_roles (${cols.join(',')})
        OUTPUT INSERTED.*

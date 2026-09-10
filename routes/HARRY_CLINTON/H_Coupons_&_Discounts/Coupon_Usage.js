@@ -188,6 +188,10 @@ router.post('/', async (req, res) => {
       }
     });
 
+    // enforce defaults
+    cols.push('isactive', 'isdeleted', 'rcm');
+    vals.push('1', '0', IST_NOW_SQL);
+
     // used_at is NOT NULL in the DB - default to current IST time if not provided
     if (!cols.includes('used_at')) {
       cols.push('used_at');
