@@ -1,4 +1,4 @@
-const EmailService = require('./services/emailService');
+const EmailService = require('./services');
 
 // Initialize email service
 const emailService = new EmailService();
