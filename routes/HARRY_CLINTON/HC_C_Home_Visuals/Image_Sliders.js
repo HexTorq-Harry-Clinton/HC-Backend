@@ -6,6 +6,7 @@ const { pool, poolConnect, sql } = require('../../../config/db_harry_clinton');
 const FIELD_TYPES = {
   image_slider_id:             { type: sql.VarChar, maxLength: 36 },
   image_url:                   { type: sql.VarChar },
+  media_type:                  { type: sql.VarChar, maxLength: 20 },
   title:                       { type: sql.VarChar },
   subtitle:                    { type: sql.VarChar },
   button_text:                 { type: sql.VarChar },
@@ -20,8 +21,8 @@ const FIELD_TYPES = {
   lcm:                         { type: sql.DateTime },
 };
 
-const INSERT_FIELDS = ['image_url', 'title', 'subtitle', 'button_text', 'redirect_link', 'display_order', 'auto_slide_interval_seconds', 'rcu'];
-const UPDATE_FIELDS = ['image_url', 'title', 'subtitle', 'button_text', 'redirect_link', 'display_order', 'auto_slide_interval_seconds', 'isactive', 'isdeleted', 'luu'];
+const INSERT_FIELDS = ['image_url', 'media_type', 'title', 'subtitle', 'button_text', 'redirect_link', 'display_order', 'auto_slide_interval_seconds', 'rcu'];
+const UPDATE_FIELDS = ['image_url', 'media_type', 'title', 'subtitle', 'button_text', 'redirect_link', 'display_order', 'auto_slide_interval_seconds', 'isactive', 'isdeleted', 'luu'];
 
 const prepareInputValue = (field, value) => {
   if (value === null || value === undefined || value === '') return null;
