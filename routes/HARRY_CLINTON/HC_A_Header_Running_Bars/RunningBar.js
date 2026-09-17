@@ -147,7 +147,7 @@ router.post('/', async (req, res) => {
 
     // enforce defaults
     cols.push('isactive', 'isdeleted', 'rcm');
-    vals.push('1', '0', DATEADD(MINUTE, 330, GETUTCDATE()));
+    vals.push('1', '0', 'DATEADD(MINUTE, 330, GETUTCDATE())');
 
     const result = await request.query(
       `INSERT INTO dbo.tbl_running_bars (${cols.join(',')})
@@ -199,7 +199,7 @@ router.put('/', async (req, res) => {
 
     // enforce defaults
     cols.push('isactive', 'isdeleted', 'rcm');
-    vals.push('1', '0', DATEADD(MINUTE, 330, GETUTCDATE()));
+    vals.push('1', '0', 'DATEADD(MINUTE, 330, GETUTCDATE())');
 
     const result = await request.query(
       `UPDATE dbo.tbl_running_bars
@@ -235,7 +235,7 @@ router.delete('/', async (req, res) => {
 
     // enforce defaults
     cols.push('isactive', 'isdeleted', 'rcm');
-    vals.push('1', '0', DATEADD(MINUTE, 330, GETUTCDATE()));
+    vals.push('1', '0', 'DATEADD(MINUTE, 330, GETUTCDATE())');
 
     const request = pool.request().input('running_bar_id', FIELD_TYPES.running_bar_id.type, running_bar_id);
 

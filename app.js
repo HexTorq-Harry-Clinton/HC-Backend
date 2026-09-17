@@ -21,6 +21,11 @@ app.use(helmet({
   // CSP is disabled because /api-tester serves its own static HTML/JS tool;
   // a default CSP would block that page's inline scripts.
   contentSecurityPolicy: false,
+  // Helmet defaults CORP to "same-origin", which blocks every <img> on the
+  // Vercel storefront that points at /Uploads on this origin (browser error
+  // ERR_BLOCKED_BY_RESPONSE.NotSameOrigin). Storefront product photos must
+  // load cross-origin, so allow it.
+  crossOriginResourcePolicy: { policy: "cross-origin" },
 }));
 
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));

@@ -139,7 +139,7 @@ router.post('/', async (req, res) => {
 
     // enforce defaults
     cols.push('isactive', 'isdeleted', 'rcm');
-    vals.push('1', '0', DATEADD(MINUTE, 330, GETUTCDATE()));
+    vals.push('1', '0', 'DATEADD(MINUTE, 330, GETUTCDATE())');
 
     await poolConnect;
     const result = await request.query(
