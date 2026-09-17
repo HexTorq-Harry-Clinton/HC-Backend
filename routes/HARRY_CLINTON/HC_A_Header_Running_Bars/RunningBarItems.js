@@ -9,6 +9,7 @@ const FIELD_TYPES = {
   itemsdata: { type: sql.VarChar }, // varchar(max)
   duration_seconds: { type: sql.Int },
   display_order: { type: sql.Int },
+  show_logo: { type: sql.Bit },
   isactive: { type: sql.Bit },
   isdeleted: { type: sql.Bit },
   rcu: { type: sql.VarChar, maxLength: 100 },
@@ -17,8 +18,8 @@ const FIELD_TYPES = {
   lcm: { type: sql.DateTime }
 };
 
-const INSERT_FIELDS = ['running_bar_id', 'itemsdata', 'duration_seconds', 'display_order', 'rcu'];
-const UPDATE_FIELDS = ['itemsdata', 'duration_seconds', 'display_order', 'isactive', 'isdeleted', 'luu'];
+const INSERT_FIELDS = ['running_bar_id', 'itemsdata', 'duration_seconds', 'display_order', 'show_logo', 'rcu'];
+const UPDATE_FIELDS = ['itemsdata', 'duration_seconds', 'display_order', 'show_logo', 'isactive', 'isdeleted', 'luu'];
 
 const prepareInputValue = (field, value) => {
   if (value === null || value === undefined || value === '') return null;
