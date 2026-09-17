@@ -13,6 +13,7 @@ router.use('/Roles', require('./A_User_Access_Management/Roles'));
 router.use('/User-Roles', require('./A_User_Access_Management/UserRoles'));
 router.use('/Running-Bar', require('./HC_A_Header_Running_Bars/RunningBar'));
 router.use('/Running-Bar-Items', require('./HC_A_Header_Running_Bars/RunningBarItems'));
+router.use('/Notification-Bar', require('./HC_A_Header_Running_Bars/NotificationBar'));
 router.use('/Menu-Category', require('./HC_B_Menu_Navigation/MenuCategory'));
 router.use('/Menu-Sub-Category', require('./HC_B_Menu_Navigation/MenuSubCategory'));
 
