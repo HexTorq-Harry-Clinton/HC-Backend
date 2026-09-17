@@ -1,0 +1,8 @@
+-- One-time purge: permanently delete ALL soft-deleted rows (isdeleted = 1)
+-- across every dbo table that carries the flag.
+-- Run repeatedly (or loop the table list client-side): a parent blocked by a
+-- soft-deleted child succeeds on a later pass once the child is gone. Rows
+-- still referenced by ACTIVE children are left untouched (never forced).
+--   DELETE FROM dbo.<table> WHERE isdeleted = 1;
+-- Verify afterwards:
+--   SELECT t.name, (SELECT COUNT(*) ... ) -- or simply re-run the dry-run count.
