@@ -9,6 +9,7 @@ const { pool, poolConnect, sql } = require('../../../config/db_harry_clinton');
 const FIELD_TYPES = {
   notification_bar_id: { type: sql.VarChar, maxLength: 36 },
   notification_text: { type: sql.VarChar }, // varchar(max)
+  duration_seconds: { type: sql.Int },
   orderpriority: { type: sql.Int },
   isactive: { type: sql.Bit },
   isdeleted: { type: sql.Bit },
@@ -18,8 +19,8 @@ const FIELD_TYPES = {
   lcm: { type: sql.DateTime }
 };
 
-const INSERT_FIELDS = ['notification_text', 'orderpriority', 'rcu'];
-const UPDATE_FIELDS = ['notification_text', 'orderpriority', 'isactive', 'isdeleted', 'luu'];
+const INSERT_FIELDS = ['notification_text', 'duration_seconds', 'orderpriority', 'rcu'];
+const UPDATE_FIELDS = ['notification_text', 'duration_seconds', 'orderpriority', 'isactive', 'isdeleted', 'luu'];
 
 const prepareInputValue = (field, value) => {
   if (value === null || value === undefined || value === '') return null;
