@@ -374,6 +374,22 @@ model tbl_faqs {
   @@index([isactive, isdeleted, display_order], map: "ix_tbl_faqs_active_order")
 }
 
+model tbl_home_settings {
+  setting_id    String    @id(map: "PK__tbl_home__256E1E32B05AB25B") @default(dbgenerated("newid()"), map: "DF__tbl_home___setti__4A38F803") @db.UniqueIdentifier
+  setting_group String    @default("home", map: "DF__tbl_home___setti__4B2D1C3C") @db.VarChar(100)
+  setting_key   String    @db.VarChar(255)
+  setting_value String?   @db.VarChar(Max)
+  display_order Int       @default(0, map: "DF__tbl_home___displ__4C214075")
+  isactive      Boolean   @default(true, map: "DF__tbl_home___isact__4D1564AE")
+  isdeleted     Boolean   @default(false, map: "DF__tbl_home___isdel__4E0988E7")
+  rcu           String?   @db.VarChar(100)
+  rcm           DateTime? @default(dbgenerated("dateadd(minute,(330),getutcdate())"), map: "DF__tbl_home_se__rcm__4EFDAD20") @db.DateTime
+  luu           String?   @db.VarChar(100)
+  lcm           DateTime? @db.DateTime
+
+  @@unique([setting_key], map: "UX_tbl_home_settings_key", where: raw("([isdeleted]=(0))"))
+}
+
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model tbl_image_sliders {
   image_slider_id             String?   @default("newid()", map: "DF__tbl_image__image__0A888742") @db.VarChar(36)
@@ -384,6 +400,7 @@ model tbl_image_sliders {
   redirect_link               String?   @db.VarChar(Max)
   display_order               Int?      @default(1, map: "DF__tbl_image__displ__0C70CFB4")
   auto_slide_interval_seconds Int?      @default(5, map: "DF__tbl_image__auto___0D64F3ED")
+  media_type                  String    @default("image", map: "DF__tbl_image__media__29CC2871") @db.VarChar(20)
   isactive                    Boolean?  @default(true, map: "DF__tbl_image__isact__0E591826")
   isdeleted                   Boolean?  @default(false, map: "DF__tbl_image__isdel__0F4D3C5F")
   rcu                         String?   @db.VarChar(Max)
@@ -491,6 +508,21 @@ model tbl_menu_video {
   lcm              DateTime? @db.DateTime
 
   @@ignore
+}
+
+model tbl_notification_bars {
+  notification_bar_id String    @id(map: "PK_tbl_notification_bars") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_notif__notif__24134F1B") @db.VarChar(36)
+  notification_text   String    @db.VarChar(Max)
+  orderpriority       Int       @default(1, map: "DF__tbl_notif__order__25077354")
+  duration_seconds    Int       @default(4, map: "DF__tbl_notif__durat__353DDB1D")
+  isactive            Boolean   @default(true, map: "DF__tbl_notif__isact__25FB978D")
+  isdeleted           Boolean   @default(false, map: "DF__tbl_notif__isdel__26EFBBC6")
+  rcu                 String?   @db.VarChar(100)
+  rcm                 DateTime  @default(dbgenerated("dateadd(minute,(330),getutcdate())"), map: "DF__tbl_notific__rcm__27E3DFFF") @db.DateTime
+  luu                 String?   @db.VarChar(100)
+  lcm                 DateTime? @db.DateTime
+
+  @@index([orderpriority], map: "IX_tbl_notification_bars_order", where: raw("([isdeleted]=(0))"))
 }
 
 model tbl_newsletter_subscriptions {
@@ -1022,6 +1054,7 @@ model tbl_reviews {
   rating           Int
   review_title     String?            @db.VarChar(255)
   review_text      String?            @db.VarChar(Max)
+  reviewer_name    String?            @db.VarChar(255)
   is_verified      Boolean?           @default(false, map: "DF__tbl_revie__is_ve__75586032")
   is_approved      Boolean?           @default(true, map: "DF__tbl_revie__is_ap__764C846B")
   isactive         Boolean?           @default(true, map: "DF__tbl_revie__isact__7740A8A4")
@@ -1061,6 +1094,7 @@ model tbl_running_bar_items {
   itemsdata           String           @db.VarChar(Max)
   duration_seconds    Int              @default(5, map: "DF__tbl_runni__durat__42E1EEFE")
   display_order       Int              @default(1, map: "DF__tbl_runni__displ__43D61337")
+  show_logo           Boolean          @default(true, map: "DF__tbl_runni__show___28D80438")
   isactive            Boolean          @default(true, map: "DF__tbl_runni__isact__44CA3770")
   isdeleted           Boolean          @default(false, map: "DF__tbl_runni__isdel__45BE5BA9")
   rcu                 String?          @db.VarChar(100)
@@ -1098,6 +1132,27 @@ model tbl_settings {
   rcm                    DateTime  @default(now(), map: "DF__tbl_setting__rcm__7E22B05D") @db.DateTime
   luu                    String?   @db.VarChar(100)
   lcm                    DateTime? @db.DateTime
+  home_collection_eyebrow   String? @db.VarChar(255)
+  home_collection_title     String? @db.VarChar(255)
+  home_collection_json      String? @db.VarChar(Max)
+  home_new_arrivals_eyebrow String? @db.VarChar(255)
+  home_new_arrivals_title   String? @db.VarChar(255)
+  home_new_arrivals_subtitle String? @db.VarChar(Max)
+  home_new_arrivals_count   Int?
+  home_new_arrivals_cols    Int?
+  home_reviews_eyebrow      String? @db.VarChar(255)
+  home_reviews_title        String? @db.VarChar(255)
+  home_reviews_subtitle     String? @db.VarChar(Max)
+  home_faqs_title           String? @db.VarChar(255)
+  home_faqs_subtitle        String? @db.VarChar(Max)
+  home_spotlight_title      String? @db.VarChar(255)
+  home_style_by_hc_title    String? @db.VarChar(255)
+  footer_facebook_url       String? @db.VarChar(1000)
+  footer_instagram_url      String? @db.VarChar(1000)
+  footer_youtube_url        String? @db.VarChar(1000)
+  footer_quick_links_json   String? @db.VarChar(Max)
+  footer_support_links_json String? @db.VarChar(Max)
+  footer_copyright_text     String? @db.VarChar(255)
 
   @@index([isactive, isdeleted], map: "ix_tbl_settings_active")
 }
