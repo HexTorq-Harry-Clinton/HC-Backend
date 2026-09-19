@@ -21,6 +21,7 @@ const FIELD_TYPES = {
   rating: { type: sql.Int },
   review_title: { type: sql.VarChar, maxLength: 255 },
   review_text: { type: sql.VarChar, maxLength: sql.MAX },
+  reviewer_name: { type: sql.VarChar, maxLength: 255 },
 
   is_verified: { type: sql.Bit },
   is_approved: { type: sql.Bit },
@@ -40,6 +41,7 @@ const INSERT_FIELDS = [
   'rating',
   'review_title',
   'review_text',
+  'reviewer_name',
   'is_verified',
   'rcu'
 ];
@@ -48,6 +50,7 @@ const UPDATE_FIELDS = [
   'rating',
   'review_title',
   'review_text',
+  'reviewer_name',
   'is_approved',
   'isactive',
   'isdeleted',
