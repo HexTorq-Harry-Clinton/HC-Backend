@@ -81,6 +81,7 @@ router.use('/Support-Contacts', require('./K_Support_Content_&_System_Configurat
 router.use('/FAQs', require('./K_Support_Content_&_System_Configuration/FAQs'));
 router.use('/Newsletter-Subscriptions', require('./K_Support_Content_&_System_Configuration/Newsletter_Subscriptions'));
 router.use('/Settings', require('./K_Support_Content_&_System_Configuration/Settings'));
+router.use('/Home-Settings', require('./HC_G_Home_Settings/HomeSettings'));
 
 
 
