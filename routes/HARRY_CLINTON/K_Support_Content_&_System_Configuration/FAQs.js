@@ -18,6 +18,7 @@ const FIELD_TYPES = {
   isdeleted: { type: sql.Bit },
 
   show_on_home: { type: sql.Bit },
+  home_order: { type: sql.Int },
 
   rcu: { type: sql.VarChar, maxLength: 100 },
   rcm: { type: sql.DateTime },
@@ -30,6 +31,7 @@ const INSERT_FIELDS = [
   'answer',
   'display_order',
   'show_on_home',
+  'home_order',
   'rcu'
 ];
 
@@ -38,6 +40,7 @@ const UPDATE_FIELDS = [
   'answer',
   'display_order',
   'show_on_home',
+  'home_order',
   'isactive',
   'isdeleted',
   'luu'
@@ -63,7 +66,7 @@ const prepareInputValue = (field, value) => {
     return null;
   }
 
-  if (field === 'display_order') {
+  if (field === 'display_order' || field === 'home_order') {
     const num = parseInt(value, 10);
     return !isNaN(num) && num > 0 ? num : null;
   }

@@ -367,13 +367,14 @@ model tbl_faqs {
   isactive      Boolean   @default(true, map: "DF__tbl_faqs__isacti__6CF8245B")
   isdeleted     Boolean   @default(false, map: "DF__tbl_faqs__isdele__6DEC4894")
   show_on_home  Boolean   @default(false, map: "DF__tbl_faqs__show_on_home")
+  home_order    Int?
   rcu           String?   @db.VarChar(100)
   rcm           DateTime  @default(now(), map: "DF__tbl_faqs__rcm__6EE06CCD") @db.DateTime
   luu           String?   @db.VarChar(100)
   lcm           DateTime? @db.DateTime
 
   @@index([isactive, isdeleted, display_order], map: "ix_tbl_faqs_active_order")
-  @@index([show_on_home, display_order], map: "ix_tbl_faqs_home", where: raw("([isdeleted]=(0) AND [isactive]=(1))"))
+  @@index([show_on_home, home_order], map: "ix_tbl_faqs_home", where: raw("([isdeleted]=(0) AND [isactive]=(1))"))
 }
 
 model tbl_home_settings {
