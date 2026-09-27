@@ -17,6 +17,8 @@ const FIELD_TYPES = {
   isactive: { type: sql.Bit },
   isdeleted: { type: sql.Bit },
 
+  show_on_home: { type: sql.Bit },
+
   rcu: { type: sql.VarChar, maxLength: 100 },
   rcm: { type: sql.DateTime },
   luu: { type: sql.VarChar, maxLength: 100 },
@@ -27,6 +29,7 @@ const INSERT_FIELDS = [
   'question',
   'answer',
   'display_order',
+  'show_on_home',
   'rcu'
 ];
 
@@ -34,6 +37,7 @@ const UPDATE_FIELDS = [
   'question',
   'answer',
   'display_order',
+  'show_on_home',
   'isactive',
   'isdeleted',
   'luu'
