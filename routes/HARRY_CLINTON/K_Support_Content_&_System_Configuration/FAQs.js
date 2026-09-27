@@ -332,4 +332,59 @@ router.delete('/', async (req, res) => {
   }
 });
 
+/* =========================================
+   6) DELETE (HARD DELETE)
+   Removes the row permanently. The soft DELETE above is the default because
+   most content should stay recoverable; this is the explicit escape hatch for
+   content that must not exist at all (e.g. replacing the whole FAQ set).
+   Guarded by an explicit `hard: true` flag in the body so it can never be
+   triggered by accident.
+   ========================================= */
+router.delete('/hard', async (req, res) => {
+  try {
+    const { faq_id } = req.body;
+
+    if (!faq_id) {
+      return res.status(400).json({
+        success: false,
+        message: 'faq_id required'
+      });
+    }
+
+    if (req.body.hard !== true && req.body.hard !== 'true' && req.body.hard !== 1) {
+      return res.status(400).json({
+        success: false,
+        message: 'Send { faq_id, hard: true } to confirm a permanent delete'
+      });
+    }
+
+    await poolConnect;
+
+    const request = pool.request()
+      .input('faq_id', FIELD_TYPES.faq_id.type, faq_id);
+
+    const result = await request.query(`
+      DELETE FROM dbo.tbl_faqs
+      WHERE faq_id = @faq_id;
+
+      SELECT @@ROWCOUNT AS affected;
+    `);
+
+    if (result.recordset[0].affected === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'FAQ not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'FAQ permanently deleted'
+    });
+  } catch (err) {
+    console.error('FAQs HARD DELETE error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 module.exports = router;
