@@ -9,9 +9,12 @@ const FIELD_TYPES = {
   product_id: { type: sql.VarChar, maxLength: 36 },
   product_name: { type: sql.VarChar, maxLength: 255 },
   product_slug: { type: sql.VarChar, maxLength: 255 },
+  style_collection_id: { type: sql.VarChar, maxLength: 36 },
+  collection_display_order: { type: sql.Int },
   short_description: { type: sql.VarChar, maxLength: 500 },
   description: { type: sql.VarChar, maxLength: sql.MAX }, // ✅ varchar(max)
   base_price: { type: sql.Decimal(18, 2) }, // ✅ simpler decimal binding
+  original_price: { type: sql.Decimal(18, 2) },
   currency_code: { type: sql.VarChar, maxLength: 10 },
   isactive: { type: sql.Bit },
   isdeleted: { type: sql.Bit },
@@ -24,9 +27,12 @@ const FIELD_TYPES = {
 const INSERT_FIELDS = [
   'product_name',
   'product_slug',
+  'style_collection_id',
+  'collection_display_order',
   'short_description',
   'description',
   'base_price',
+  'original_price',
   'currency_code',
   'rcu'
 ];
@@ -34,9 +40,12 @@ const INSERT_FIELDS = [
 const UPDATE_FIELDS = [
   'product_name',
   'product_slug',
+  'style_collection_id',
+  'collection_display_order',
   'short_description',
   'description',
   'base_price',
+  'original_price',
   'currency_code',
   'isactive',
   'luu'
@@ -99,6 +108,24 @@ router.get('/', async (req, res) => {
     if (!includeDeleted) where.push('isdeleted = 0');
     if (!includeInactive) where.push('isactive = 1');
 
+    const request = pool.request();
+    if (req.query.style_collection_id) {
+      where.push('style_collection_id = @style_collection_id');
+      request.input('style_collection_id', FIELD_TYPES.style_collection_id.type, req.query.style_collection_id);
+    }
+    if (req.query.product_id) {
+      where.push('product_id = @filter_product_id');
+      request.input('filter_product_id', FIELD_TYPES.product_id.type, req.query.product_id);
+    }
+    if (req.query.product_slug) {
+      where.push('product_slug = @filter_product_slug');
+      request.input('filter_product_slug', FIELD_TYPES.product_slug.type, req.query.product_slug);
+    }
+    if (req.query.search) {
+      where.push('(product_name LIKE @search OR product_slug LIKE @search OR short_description LIKE @search OR description LIKE @search)');
+      request.input('search', sql.VarChar, `%${String(req.query.search).trim()}%`);
+    }
+
     const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
 
     const query = `
@@ -113,7 +140,7 @@ router.get('/', async (req, res) => {
       ${whereSql};
     `;
 
-    const result = await pool.request().query(query);
+    const result = await request.query(query);
 
     const rows = result.recordsets?.[0] || [];
     const total = result.recordsets?.[1]?.[0]?.total ?? rows.length;

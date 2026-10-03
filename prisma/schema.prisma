@@ -897,9 +897,12 @@ model tbl_products {
   product_id                   String                         @id(map: "pk_tbl_products") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_produ__produ__2EA5EC27") @db.VarChar(36)
   product_name                 String                         @db.VarChar(255)
   product_slug                 String                         @unique(map: "ux_tbl_products_slug", where: raw("([isdeleted]=(0))")) @db.VarChar(255)
+  style_collection_id          String?                        @db.VarChar(36)
+  collection_display_order    Int?                           @db.Int
   short_description            String?                        @db.VarChar(500)
   description                  String?                        @db.VarChar(Max)
   base_price                   Decimal?                       @db.Decimal(18, 2)
+  original_price               Decimal?                       @db.Decimal(18, 2)
   currency_code                String                         @default("inr", map: "DF__tbl_produ__curre__2F9A1060") @db.VarChar(10)
   isactive                     Boolean                        @default(true, map: "DF__tbl_produ__isact__308E3499")
   isdeleted                    Boolean                        @default(false, map: "DF__tbl_produ__isdel__318258D2")
@@ -917,6 +920,7 @@ model tbl_products {
   tbl_wishlist_items           tbl_wishlist_items[]
 
   @@index([isactive, isdeleted], map: "ix_tbl_products_active")
+  @@index([style_collection_id, collection_display_order], map: "ix_tbl_products_collection_order")
 }
 
 model tbl_profiles {
