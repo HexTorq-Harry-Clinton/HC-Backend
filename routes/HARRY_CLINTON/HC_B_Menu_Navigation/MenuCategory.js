@@ -7,6 +7,10 @@ const FIELD_TYPES = {
   menu_category_id: { type: sql.VarChar, maxLength: 36 },
   menu_category_name: { type: sql.VarChar, maxLength: 255 },
   menu_category_slug: { type: sql.VarChar, maxLength: 255 },
+  hero_title: { type: sql.NVarChar, maxLength: 255 },
+  hero_subtitle: { type: sql.NVarChar, maxLength: 1000 },
+  hero_image_url: { type: sql.NVarChar, maxLength: 1000 },
+  marquee_words: { type: sql.NVarChar, maxLength: 4000 },
   display_order: { type: sql.Int },
   isactive: { type: sql.Bit },
   isdeleted: { type: sql.Bit },
@@ -16,8 +20,14 @@ const FIELD_TYPES = {
   lcm: { type: sql.DateTime }
 };
 
-const INSERT_FIELDS = ['menu_category_name', 'menu_category_slug', 'display_order', 'rcu'];
-const UPDATE_FIELDS = ['menu_category_name', 'menu_category_slug', 'display_order', 'isactive', 'isdeleted', 'luu'];
+const INSERT_FIELDS = [
+  'menu_category_name', 'menu_category_slug', 'hero_title', 'hero_subtitle',
+  'hero_image_url', 'marquee_words', 'display_order', 'rcu'
+];
+const UPDATE_FIELDS = [
+  'menu_category_name', 'menu_category_slug', 'hero_title', 'hero_subtitle',
+  'hero_image_url', 'marquee_words', 'display_order', 'isactive', 'isdeleted', 'luu'
+];
 
 const prepareInputValue = (field, value) => {
   if (value === null || value === undefined || value === '') return null;

@@ -9,6 +9,8 @@ const FIELD_TYPES = {
   menu_subcategory_name: { type: sql.VarChar, maxLength: 255 },
   menu_subcategory_slug: { type: sql.VarChar, maxLength: 255 },
   redirect_link: { type: sql.VarChar, maxLength: 1000 },
+  image_url: { type: sql.NVarChar, maxLength: 1000 },
+  video_url: { type: sql.NVarChar, maxLength: 1000 },
   display_order: { type: sql.Int },
   isactive: { type: sql.Bit },
   isdeleted: { type: sql.Bit },
@@ -23,6 +25,8 @@ const INSERT_FIELDS = [
   'menu_subcategory_name',
   'menu_subcategory_slug',
   'redirect_link',
+  'image_url',
+  'video_url',
   'display_order',
   'rcu'
 ];
@@ -32,6 +36,8 @@ const UPDATE_FIELDS = [
   'menu_subcategory_name',
   'menu_subcategory_slug',
   'redirect_link',
+  'image_url',
+  'video_url',
   'display_order',
   'isactive',
   'isdeleted',
