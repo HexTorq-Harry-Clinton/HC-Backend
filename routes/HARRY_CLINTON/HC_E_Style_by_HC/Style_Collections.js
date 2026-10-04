@@ -7,6 +7,7 @@ const FIELD_TYPES = {
   style_collection_id: { type: sql.VarChar, maxLength: 36 },
   collection_name:     { type: sql.VarChar },
   collection_slug:     { type: sql.VarChar },
+  eyebrow:             { type: sql.VarChar },
   description:         { type: sql.VarChar },
   redirect_link:       { type: sql.VarChar },
   cta_text:            { type: sql.VarChar },
@@ -19,8 +20,8 @@ const FIELD_TYPES = {
   lcm:                 { type: sql.DateTime },
 };
 
-const INSERT_FIELDS = ['collection_name', 'collection_slug', 'description', 'redirect_link', 'cta_text', 'display_order', 'rcu'];
-const UPDATE_FIELDS = ['collection_name', 'collection_slug', 'description', 'redirect_link', 'cta_text', 'display_order', 'isactive', 'isdeleted', 'luu'];
+const INSERT_FIELDS = ['collection_name', 'collection_slug', 'eyebrow', 'description', 'redirect_link', 'cta_text', 'display_order', 'rcu'];
+const UPDATE_FIELDS = ['collection_name', 'collection_slug', 'eyebrow', 'description', 'redirect_link', 'cta_text', 'display_order', 'isactive', 'isdeleted', 'luu'];
 
 const prepareInputValue = (field, value) => {
   if (value === null || value === undefined || value === '') return null;

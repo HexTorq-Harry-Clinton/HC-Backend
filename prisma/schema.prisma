@@ -1299,6 +1299,7 @@ model tbl_style_collections {
   style_collection_id String?   @default("newid()", map: "DF__tbl_style__style__290D0E62") @db.VarChar(36)
   collection_name     String?   @db.VarChar(Max)
   collection_slug     String?   @db.VarChar(Max)
+  eyebrow            String?   @db.VarChar(Max)
   description         String?   @db.VarChar(Max)
   redirect_link       String?   @db.VarChar(Max)
   cta_text            String?   @db.VarChar(Max)
