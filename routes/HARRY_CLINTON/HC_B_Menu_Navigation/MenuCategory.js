@@ -9,6 +9,9 @@ const FIELD_TYPES = {
   menu_category_slug: { type: sql.VarChar, maxLength: 255 },
   hero_title: { type: sql.NVarChar, maxLength: 255 },
   hero_subtitle: { type: sql.NVarChar, maxLength: 1000 },
+  hero_description: { type: sql.NVarChar, maxLength: 2000 },
+  hero_cta_text: { type: sql.NVarChar, maxLength: 255 },
+  hero_cta_link: { type: sql.NVarChar, maxLength: 1000 },
   hero_image_url: { type: sql.NVarChar, maxLength: 1000 },
   marquee_words: { type: sql.NVarChar, maxLength: 4000 },
   display_order: { type: sql.Int },
@@ -21,11 +24,11 @@ const FIELD_TYPES = {
 };
 
 const INSERT_FIELDS = [
-  'menu_category_name', 'menu_category_slug', 'hero_title', 'hero_subtitle',
+  'menu_category_name', 'menu_category_slug', 'hero_title', 'hero_subtitle', 'hero_description', 'hero_cta_text', 'hero_cta_link',
   'hero_image_url', 'marquee_words', 'display_order', 'rcu'
 ];
 const UPDATE_FIELDS = [
-  'menu_category_name', 'menu_category_slug', 'hero_title', 'hero_subtitle',
+  'menu_category_name', 'menu_category_slug', 'hero_title', 'hero_subtitle', 'hero_description', 'hero_cta_text', 'hero_cta_link',
   'hero_image_url', 'marquee_words', 'display_order', 'isactive', 'isdeleted', 'luu'
 ];
 
