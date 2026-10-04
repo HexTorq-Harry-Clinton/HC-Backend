@@ -14,6 +14,7 @@ const FIELD_TYPES = {
 
   full_name: { type: sql.VarChar, maxLength: 255 },
   mobile_number: { type: sql.VarChar, maxLength: 50 },
+  emailid: { type: sql.VarChar, maxLength: 255 },
   house_street: { type: sql.VarChar, maxLength: 500 },
   city: { type: sql.VarChar, maxLength: 150 },
   state: { type: sql.VarChar, maxLength: 150 },
@@ -35,6 +36,7 @@ const INSERT_FIELDS = [
   'user_id',
   'full_name',
   'mobile_number',
+  'emailid',
   'house_street',
   'city',
   'state',
@@ -47,6 +49,7 @@ const INSERT_FIELDS = [
 const UPDATE_FIELDS = [
   'full_name',
   'mobile_number',
+  'emailid',
   'house_street',
   'city',
   'state',

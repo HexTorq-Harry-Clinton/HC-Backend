@@ -12,6 +12,7 @@ model tbl_addresses {
   user_id       String    @db.VarChar(36)
   full_name     String    @db.VarChar(255)
   mobile_number String    @db.VarChar(50)
+  emailid       String?   @db.VarChar(255)
   house_street  String    @db.VarChar(500)
   city          String    @db.VarChar(150)
   state         String    @db.VarChar(150)
