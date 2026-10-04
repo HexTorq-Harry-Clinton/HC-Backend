@@ -1174,6 +1174,38 @@ model tbl_settings {
   @@index([isactive, isdeleted], map: "ix_tbl_settings_active")
 }
 
+model tbl_subcategory_page_content {
+  subcategory_page_content_id String   @id(map: "pk_tbl_subcategory_page_content") @default("CONVERT([varchar](36),newid())", map: "df_tbl_subcategory_page_content_id") @db.VarChar(36)
+  subcategory_slug            String   @unique(map: "ux_tbl_subcategory_page_content_slug", where: raw("([isdeleted]=(0))")) @db.VarChar(100)
+  category_group              String?  @db.VarChar(100)
+  hero_title                  String?  @db.VarChar(255)
+  hero_subtitle               String?  @db.VarChar(500)
+  hero_video_url              String?  @db.VarChar(1000)
+  marquee_words_json          String?  @db.VarChar(Max)
+  left_image_url              String?  @db.VarChar(1000)
+  center_video_url            String?  @db.VarChar(1000)
+  right_image_url             String?  @db.VarChar(1000)
+  slider_images_json          String?  @db.VarChar(Max)
+  slider_image_1_url          String?  @db.VarChar(1000)
+  slider_image_2_url          String?  @db.VarChar(1000)
+  slider_image_3_url          String?  @db.VarChar(1000)
+  description_title          String?  @db.VarChar(255)
+  description_text           String?  @db.VarChar(Max)
+  label_video_url             String?  @db.VarChar(1000)
+  label_image_url             String?  @db.VarChar(1000)
+  footer_text                String?  @db.VarChar(255)
+  display_order              Int      @default(0, map: "df_tbl_subcategory_page_content_order") @db.Int
+  isactive                   Boolean  @default(true, map: "df_tbl_subcategory_page_content_active")
+  isdeleted                  Boolean  @default(false, map: "df_tbl_subcategory_page_content_deleted")
+  rcu                        String?  @db.VarChar(100)
+  rcm                        DateTime @default(now(), map: "df_tbl_subcategory_page_content_created") @db.DateTime
+  luu                        String?  @db.VarChar(100)
+  lcm                        DateTime? @db.DateTime
+
+  @@index([category_group, display_order], map: "ix_tbl_subcategory_page_content_group")
+  @@index([isactive, isdeleted], map: "ix_tbl_subcategory_page_content_active")
+}
+
 model tbl_shipment_events {
   shipment_event_id String    @id(map: "PK__tbl_ship__1F365B12A23DBBBE") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_shipm__shipm__414EAC47") @db.VarChar(36)
   shipment_id       String    @db.VarChar(36)
