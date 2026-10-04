@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { randomUUID } = require('crypto');
 const { pool, poolConnect, sql } = require('../../../config/db_harry_clinton');
 
 const FIELDS = {
@@ -48,12 +49,13 @@ router.post('/', async (req, res) => {
     const data = req.body || {};
     if (!data.subcategory_slug) return res.status(400).json({ success: false, message: 'subcategory_slug required' });
     await poolConnect;
-    const request = pool.request();
+    const request = pool.request().input('subcategory_page_content_id', sql.VarChar(36), randomUUID());
     const cols = [], vals = [];
     for (const field of INSERT_FIELDS) {
       const value = clean(field, data[field]);
       if (value !== null) { cols.push(field); vals.push(`@${field}`); bind(request, field, value); }
     }
+    cols.unshift('subcategory_page_content_id'); vals.unshift('@subcategory_page_content_id');
     cols.push('isactive', 'isdeleted', 'rcm'); vals.push('1', '0', 'DATEADD(MINUTE, 330, GETUTCDATE())');
     const result = await request.query(`INSERT INTO dbo.tbl_subcategory_page_content (${cols.join(',')}) OUTPUT INSERTED.* VALUES (${vals.join(',')});`);
     res.status(201).json({ success: true, data: result.recordset[0] });
