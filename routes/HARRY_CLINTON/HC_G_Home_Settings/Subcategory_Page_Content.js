@@ -83,4 +83,21 @@ router.put('/', async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  try {
+    await poolConnect;
+    const result = await pool.request()
+      .input('subcategory_page_content_id', sql.VarChar(36), req.params.id)
+      .input('luu', sql.VarChar(100), 'ADMIN_PORTAL')
+      .query(`UPDATE dbo.tbl_subcategory_page_content
+        SET isdeleted = 1, isactive = 0, luu = @luu, lcm = DATEADD(MINUTE, 330, GETUTCDATE())
+        OUTPUT INSERTED.*
+        WHERE subcategory_page_content_id = @subcategory_page_content_id AND isdeleted = 0;`);
+    if (!result.recordset[0]) return res.status(404).json({ success: false, message: 'Subcategory page content not found' });
+    res.json({ success: true, data: result.recordset[0] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 module.exports = router;
