@@ -931,7 +931,7 @@ model tbl_products {
 }
 
 model tbl_product_details {
-  product_details_id String       @id(map: "pk_tbl_product_details") @default("CONVERT([varchar](36),newid())") @db.VarChar(36)
+  product_details_id String       @id(map: "pk_tbl_product_details") @default(dbgenerated("CONVERT([varchar](36),newid())")) @db.VarChar(36)
   product_id         String       @unique(map: "ux_tbl_product_details_product") @db.VarChar(36)
   fabric_details     String?      @db.VarChar(Max)
   trims_used         String?      @db.VarChar(Max)
@@ -954,7 +954,7 @@ model tbl_product_details {
 }
 
 model tbl_product_size_charts {
-  product_size_chart_id String                         @id(map: "pk_tbl_product_size_charts") @default("CONVERT([varchar](36),newid())") @db.VarChar(36)
+  product_size_chart_id String                         @id(map: "pk_tbl_product_size_charts") @default(dbgenerated("CONVERT([varchar](36),newid())")) @db.VarChar(36)
   product_id            String                         @unique(map: "ux_tbl_product_size_charts_product") @db.VarChar(36)
   unit                  String                         @default("in") @db.VarChar(20)
   isactive              Boolean                        @default(true)
@@ -968,7 +968,7 @@ model tbl_product_size_charts {
 }
 
 model tbl_product_size_measurements {
-  product_size_measurement_id String                  @id(map: "pk_tbl_product_size_measurements") @default("CONVERT([varchar](36),newid())") @db.VarChar(36)
+  product_size_measurement_id String                  @id(map: "pk_tbl_product_size_measurements") @default(dbgenerated("CONVERT([varchar](36),newid())")) @db.VarChar(36)
   product_size_chart_id       String                  @db.VarChar(36)
   size_id                     String                  @db.VarChar(36)
   chest                       Decimal?                @db.Decimal(10, 2)

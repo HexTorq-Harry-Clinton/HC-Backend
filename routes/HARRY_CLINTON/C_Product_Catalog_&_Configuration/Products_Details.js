@@ -43,7 +43,7 @@ router.put('/', async (req, res) => {
       IF EXISTS (SELECT 1 FROM dbo.tbl_product_details WHERE product_id = @product_id AND isdeleted = 0)
         UPDATE dbo.tbl_product_details SET ${assignments}, luu = 'ADMIN_PORTAL', lcm = DATEADD(MINUTE,330,GETUTCDATE()) WHERE product_id = @product_id AND isdeleted = 0;
       ELSE
-        INSERT INTO dbo.tbl_product_details (product_id, ${FIELDS.join(', ')}, rcu, rcm) VALUES (@product_id, ${FIELDS.map((f) => `@${f}`).join(', ')}, 'ADMIN_PORTAL', DATEADD(MINUTE,330,GETUTCDATE()));
+        INSERT INTO dbo.tbl_product_details (product_details_id, product_id, ${FIELDS.join(', ')}, rcu, rcm) VALUES (CONVERT(varchar(36), NEWID()), @product_id, ${FIELDS.map((f) => `@${f}`).join(', ')}, 'ADMIN_PORTAL', DATEADD(MINUTE,330,GETUTCDATE()));
       SELECT TOP 1 * FROM dbo.tbl_product_details WHERE product_id = @product_id AND isdeleted = 0;
     `);
     res.json({ success: true, data: result.recordset[0] });
