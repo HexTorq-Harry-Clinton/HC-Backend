@@ -23,6 +23,7 @@ router.use('/Products-Variants', require('./C_Product_Catalog_&_Configuration/Pr
 router.use('/Products-Attributes', require('./C_Product_Catalog_&_Configuration/Products_Attributes'));
 router.use('/Products-Attributes-Values', require('./C_Product_Catalog_&_Configuration/Products_Attributes_Values'));
 router.use('/Products-Sizes', require('./C_Product_Catalog_&_Configuration/Products_Sizes'));
+router.use('/Products-Size-Charts', require('./C_Product_Catalog_&_Configuration/Products_Size_Charts'));
 
 router.use('/Products-Cloth-Types', require('./C_Product_Catalog_&_Configuration/Products_Cloth_Types'));
 router.use('/Products-Care-Instructions', require('./C_Product_Catalog_&_Configuration/Products_Care_Instructions'));

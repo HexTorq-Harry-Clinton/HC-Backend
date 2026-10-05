@@ -920,6 +920,7 @@ model tbl_products {
   tbl_product_media            tbl_product_media[]
   tbl_product_reviews          tbl_product_reviews[]
   tbl_product_details          tbl_product_details?
+  tbl_product_size_charts      tbl_product_size_charts?
   tbl_product_seo              tbl_product_seo?
   tbl_product_variants         tbl_product_variants?
   tbl_wishlist_items           tbl_wishlist_items[]
@@ -949,6 +950,41 @@ model tbl_product_details {
   luu                String?      @db.VarChar(100)
   lcm                DateTime?    @db.DateTime
   tbl_products       tbl_products @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_product_details_product")
+}
+
+model tbl_product_size_charts {
+  product_size_chart_id String                         @id(map: "pk_tbl_product_size_charts") @default("CONVERT([varchar](36),newid())") @db.VarChar(36)
+  product_id            String                         @unique(map: "ux_tbl_product_size_charts_product") @db.VarChar(36)
+  unit                  String                         @default("in") @db.VarChar(20)
+  isactive              Boolean                        @default(true)
+  isdeleted             Boolean                        @default(false)
+  rcu                   String?                        @db.VarChar(100)
+  rcm                   DateTime                       @default(now()) @db.DateTime
+  luu                   String?                        @db.VarChar(100)
+  lcm                   DateTime?                      @db.DateTime
+  tbl_products          tbl_products                   @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_product_size_charts_product")
+  tbl_product_size_measurements tbl_product_size_measurements[]
+}
+
+model tbl_product_size_measurements {
+  product_size_measurement_id String                  @id(map: "pk_tbl_product_size_measurements") @default("CONVERT([varchar](36),newid())") @db.VarChar(36)
+  product_size_chart_id       String                  @db.VarChar(36)
+  size_id                     String                  @db.VarChar(36)
+  chest                       Decimal?                @db.Decimal(10, 2)
+  waist                       Decimal?                @db.Decimal(10, 2)
+  hip                         Decimal?                @db.Decimal(10, 2)
+  shoulder                    Decimal?                @db.Decimal(10, 2)
+  sleeve_length               Decimal?                @db.Decimal(10, 2)
+  isactive                    Boolean                 @default(true)
+  isdeleted                   Boolean                 @default(false)
+  rcu                         String?                 @db.VarChar(100)
+  rcm                         DateTime                @default(now()) @db.DateTime
+  luu                         String?                 @db.VarChar(100)
+  lcm                         DateTime?               @db.DateTime
+  tbl_product_size_charts     tbl_product_size_charts @relation(fields: [product_size_chart_id], references: [product_size_chart_id], onUpdate: NoAction, map: "fk_tbl_product_size_measurements_chart")
+  tbl_sizes                   tbl_sizes               @relation(fields: [size_id], references: [size_id], onUpdate: NoAction, map: "fk_tbl_product_size_measurements_size")
+
+  @@unique([product_size_chart_id, size_id], map: "ux_tbl_product_size_measurements_chart_size", where: raw("([isdeleted]=(0))"))
 }
 
 model tbl_profiles {
@@ -1292,6 +1328,7 @@ model tbl_sizes {
   luu                  String?                @db.VarChar(100)
   lcm                  DateTime?              @db.DateTime
   tbl_product_variants tbl_product_variants[]
+  tbl_product_size_measurements tbl_product_size_measurements[]
 
   @@unique([size_name, size_type], map: "ux_tbl_sizes_name_type", where: raw("([isdeleted]=(0))"))
   @@index([size_type, display_order], map: "ix_tbl_sizes_type_order", where: raw("([isdeleted]=(0))"))
