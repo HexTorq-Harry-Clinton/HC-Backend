@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
       FROM dbo.tbl_product_size_charts c
       LEFT JOIN dbo.tbl_product_size_measurements m ON m.product_size_chart_id = c.product_size_chart_id AND m.isdeleted = 0 AND m.isactive = 1
       LEFT JOIN dbo.tbl_sizes s ON s.size_id = m.size_id
-      WHERE c.product_id = @product_id AND c.isdeleted = 0 AND c.isactive = 1
+      WHERE c.product_id = @product_id AND c.isdeleted = 0 AND c.isactive = 1 AND m.product_size_measurement_id IS NOT NULL
       ORDER BY s.display_order, s.size_name;
     `);
     res.json({ success: true, data: result.recordset });
