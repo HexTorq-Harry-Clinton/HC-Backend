@@ -53,4 +53,22 @@ router.put('/', async (req, res) => {
   }
 });
 
+router.delete('/', async (req, res) => {
+  try {
+    const productId = req.body?.product_id || req.query.product_id;
+    if (!productId) return res.status(400).json({ success: false, message: 'product_id required' });
+    await poolConnect;
+    const result = await pool.request().input('product_id', sql.VarChar(36), String(productId)).query(`
+      UPDATE dbo.tbl_product_details SET isactive = 0, isdeleted = 1, luu = 'ADMIN_PORTAL', lcm = DATEADD(MINUTE,330,GETUTCDATE())
+      WHERE product_id = @product_id AND isdeleted = 0;
+      SELECT @@ROWCOUNT AS affected;
+    `);
+    if (result.recordset[0].affected === 0) return res.status(404).json({ success: false, message: 'Product details not found' });
+    res.json({ success: true, message: 'Product details deleted' });
+  } catch (err) {
+    console.error('Product details DELETE error:', err);
+    res.status(500).json({ success: false, message: 'Internal server error', error: err.message });
+  }
+});
+
 module.exports = router;

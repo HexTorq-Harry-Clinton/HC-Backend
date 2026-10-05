@@ -60,4 +60,31 @@ router.put('/', async (req, res) => {
   }
 });
 
+router.delete('/', async (req, res) => {
+  try {
+    const productId = req.body?.product_id || req.query.product_id;
+    const sizeId = req.body?.size_id || req.query.size_id;
+    if (!productId) return res.status(400).json({ success: false, message: 'product_id required' });
+    await poolConnect;
+    const request = pool.request().input('product_id', sql.VarChar(36), String(productId));
+    if (sizeId) request.input('size_id', sql.VarChar(36), String(sizeId));
+    const result = await request.query(sizeId ? `
+      UPDATE m SET isactive = 0, isdeleted = 1, luu = 'ADMIN_PORTAL', lcm = DATEADD(MINUTE,330,GETUTCDATE())
+      FROM dbo.tbl_product_size_measurements m JOIN dbo.tbl_product_size_charts c ON c.product_size_chart_id=m.product_size_chart_id
+      WHERE c.product_id=@product_id AND m.size_id=@size_id AND m.isdeleted=0;
+      SELECT @@ROWCOUNT AS affected;
+    ` : `
+      UPDATE m SET isactive = 0, isdeleted = 1, luu = 'ADMIN_PORTAL', lcm = DATEADD(MINUTE,330,GETUTCDATE())
+      FROM dbo.tbl_product_size_measurements m JOIN dbo.tbl_product_size_charts c ON c.product_size_chart_id=m.product_size_chart_id WHERE c.product_id=@product_id AND m.isdeleted=0;
+      UPDATE dbo.tbl_product_size_charts SET isactive=0, isdeleted=1, luu='ADMIN_PORTAL', lcm=DATEADD(MINUTE,330,GETUTCDATE()) WHERE product_id=@product_id AND isdeleted=0;
+      SELECT @@ROWCOUNT AS affected;
+    `);
+    if (result.recordset[0].affected === 0) return res.status(404).json({ success: false, message: 'Size chart entry not found' });
+    res.json({ success: true, message: sizeId ? 'Size measurement deleted' : 'Size chart deleted' });
+  } catch (err) {
+    console.error('Product size chart DELETE error:', err);
+    res.status(500).json({ success: false, message: 'Internal server error', error: err.message });
+  }
+});
+
 module.exports = router;
