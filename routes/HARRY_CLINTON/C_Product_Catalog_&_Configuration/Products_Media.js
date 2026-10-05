@@ -4,6 +4,7 @@ const router = express.Router();
 const { pool, poolConnect, sql } = require('../../../config/db_harry_clinton');
 
 const IST_NOW = 'DATEADD(MINUTE, 330, GETUTCDATE())';
+const MEDIA_ROLES = ['front', 'side', 'back', 'close-up', 'detailing', 'video'];
 
 const FIELD_TYPES = {
   product_media_id: { type: sql.VarChar, maxLength: 36 },
@@ -12,6 +13,7 @@ const FIELD_TYPES = {
   product_variant_id: { type: sql.VarChar, maxLength: 36 },
 
   media_type: { type: sql.VarChar, maxLength: 20 },     // image / video
+  media_role: { type: sql.VarChar, maxLength: 30 },     // front / side / back / close-up / detailing / video
   media_url: { type: sql.VarChar, maxLength: 1000 },
   alt_text: { type: sql.VarChar, maxLength: 255 },
 
@@ -31,6 +33,7 @@ const INSERT_FIELDS = [
   'product_id',
   'product_variant_id',
   'media_type',
+  'media_role',
   'media_url',
   'alt_text',
   'display_order',
@@ -42,6 +45,7 @@ const UPDATE_FIELDS = [
   'product_id',
   'product_variant_id',
   'media_type',
+  'media_role',
   'media_url',
   'alt_text',
   'display_order',
@@ -169,6 +173,9 @@ router.post('/', async (req, res) => {
         message: 'product_id, media_type, and media_url are required'
       });
     }
+    if (data.media_role && !MEDIA_ROLES.includes(String(data.media_role).toLowerCase())) {
+      return res.status(400).json({ success: false, message: 'Invalid media_role' });
+    }
 
     const cols = [];
     const vals = [];
@@ -213,6 +220,9 @@ router.put('/', async (req, res) => {
 
     if (!data || !data.product_media_id) {
       return res.status(400).json({ success: false, message: 'product_media_id required' });
+    }
+    if (data.media_role && !MEDIA_ROLES.includes(String(data.media_role).toLowerCase())) {
+      return res.status(400).json({ success: false, message: 'Invalid media_role' });
     }
 
     const updates = [];

@@ -788,6 +788,7 @@ model tbl_product_media {
   product_id           String                @db.VarChar(36)
   product_variant_id   String?               @db.VarChar(36)
   media_type           String                @db.VarChar(20)
+  media_role           String?               @db.VarChar(30)
   media_url            String                @db.VarChar(1000)
   alt_text             String?               @db.VarChar(255)
   display_order        Int                   @default(1, map: "DF__tbl_produ__displ__5D60DB10")
