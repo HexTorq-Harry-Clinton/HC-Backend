@@ -1473,6 +1473,7 @@ model tbl_users {
   luu                          String?                        @db.VarChar(100)
   lcm                          DateTime?                      @db.DateTime
   tbl_customer_profiles        tbl_customer_profiles?
+  tbl_customer_measurements    tbl_customer_measurements?
   tbl_newsletter_subscriptions tbl_newsletter_subscriptions[]
   tbl_product_reviews          tbl_product_reviews[]
   tbl_review_responses         tbl_review_responses[]
@@ -1480,6 +1481,40 @@ model tbl_users {
   @@index([email], map: "ix_tbl_users_email", where: raw("([isdeleted]=(0))"))
   @@index([last_login], map: "ix_tbl_users_last_login", where: raw("([isdeleted]=(0))"))
   @@index([phone_number], map: "ix_tbl_users_phone", where: raw("([isdeleted]=(0))"))
+}
+
+model tbl_customer_measurements {
+  measurement_id        String    @id(map: "PK_tbl_customer_measurements") @default("newid()", map: "DF_tbl_customer_measurements_id") @db.UniqueIdentifier
+  user_id               String    @unique(map: "UX_tbl_customer_measurements_user") @db.VarChar(36)
+  guest_name            String?   @db.VarChar(255)
+  product_name         String?   @db.VarChar(255)
+  unit                  String    @default("inches") @db.VarChar(30)
+  shirt_body_length     String?   @db.VarChar(50)
+  shirt_shoulder        String?   @db.VarChar(50)
+  shirt_sleeve_length   String?   @db.VarChar(50)
+  shirt_arm_loose       String?   @db.VarChar(50)
+  shirt_chest           String?   @db.VarChar(50)
+  shirt_waist           String?   @db.VarChar(50)
+  shirt_hip             String?   @db.VarChar(50)
+  shirt_collar          String?   @db.VarChar(50)
+  shirt_cuff            String?   @db.VarChar(50)
+  trouser_full_length   String?   @db.VarChar(50)
+  trouser_inseam        String?   @db.VarChar(50)
+  trouser_fly           String?   @db.VarChar(50)
+  trouser_u_round       String?   @db.VarChar(50)
+  trouser_waist         String?   @db.VarChar(50)
+  trouser_hip           String?   @db.VarChar(50)
+  trouser_thigh         String?   @db.VarChar(50)
+  trouser_knee          String?   @db.VarChar(50)
+  trouser_bottom        String?   @db.VarChar(50)
+  notes                 String?   @db.VarChar(Max)
+  isactive              Boolean   @default(true)
+  isdeleted             Boolean   @default(false)
+  rcu                   String?   @db.VarChar(100)
+  rcm                   DateTime  @default(now()) @db.DateTime
+  luu                   String?   @db.VarChar(100)
+  lcm                   DateTime? @db.DateTime
+  tbl_users             tbl_users @relation(fields: [user_id], references: [user_id], onUpdate: NoAction, map: "FK_tbl_customer_measurements_user")
 }
 
 model tbl_variant_rating_summary {

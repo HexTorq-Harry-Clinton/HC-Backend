@@ -41,6 +41,7 @@ router.use('/Custom-Appointments', require('./HC_F_Appointments/CustomAppointmen
 
 router.use('/Profiles', require('./B_Customer_Management/Profiles'));
 router.use('/Addresses', require('./B_Customer_Management/Addresses'));
+router.use('/Measurements', require('./B_Customer_Management/Measurements'));
 
 // D) Wishlist Management
 router.use('/Wishlists', require('./D_Wishlist_Management/Wishlists'));
