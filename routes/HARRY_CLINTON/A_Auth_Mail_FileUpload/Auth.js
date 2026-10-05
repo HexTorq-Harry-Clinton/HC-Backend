@@ -239,12 +239,14 @@ router.post('/OTP-Login', async (req, res, next) => {
 
 
     if (success === true && userRow) {
+      const userRoles = result.recordsets?.[1] ?? [];
       const Data = {
         Status: success.toString(),
         Message: message,
         Response: {
-          ...userRow,
-          token: generateJwt({ user_id: userRow.user_id, email_id: userRow.email_id, role_code: null }),
+          user: userRow,
+          roles: userRoles,
+          token: generateJwt({ user_id: userRow.user_id, email_id: userRow.email_id, role_code: userRoles[0]?.role_code ?? null }),
         },
         ResponseCode: '200',
         RequestReceived: data,
