@@ -919,12 +919,36 @@ model tbl_products {
   tbl_product_attribute_values tbl_product_attribute_values[]
   tbl_product_media            tbl_product_media[]
   tbl_product_reviews          tbl_product_reviews[]
+  tbl_product_details          tbl_product_details?
   tbl_product_seo              tbl_product_seo?
   tbl_product_variants         tbl_product_variants?
   tbl_wishlist_items           tbl_wishlist_items[]
 
   @@index([isactive, isdeleted], map: "ix_tbl_products_active")
   @@index([style_collection_id, collection_display_order], map: "ix_tbl_products_collection_order")
+}
+
+model tbl_product_details {
+  product_details_id String       @id(map: "pk_tbl_product_details") @default("CONVERT([varchar](36),newid())") @db.VarChar(36)
+  product_id         String       @unique(map: "ux_tbl_product_details_product") @db.VarChar(36)
+  fabric_details     String?      @db.VarChar(Max)
+  trims_used         String?      @db.VarChar(Max)
+  special_detailing  String?      @db.VarChar(Max)
+  lining_details     String?      @db.VarChar(Max)
+  product_fit        String?      @db.VarChar(100)
+  model_fit          String?      @db.VarChar(255)
+  construction_type  String?      @db.VarChar(50)
+  sleeve_type        String?      @db.VarChar(100)
+  sleeve_pattern     String?      @db.VarChar(255)
+  wash_care          String?      @db.VarChar(Max)
+  sleeve_length      String?      @db.VarChar(100)
+  isactive           Boolean      @default(true)
+  isdeleted          Boolean      @default(false)
+  rcu                String?      @db.VarChar(100)
+  rcm                DateTime     @default(now()) @db.DateTime
+  luu                String?      @db.VarChar(100)
+  lcm                DateTime?    @db.DateTime
+  tbl_products       tbl_products @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_product_details_product")
 }
 
 model tbl_profiles {

@@ -18,6 +18,7 @@ router.use('/Menu-Category', require('./HC_B_Menu_Navigation/MenuCategory'));
 router.use('/Menu-Sub-Category', require('./HC_B_Menu_Navigation/MenuSubCategory'));
 
 router.use('/Products', require('./C_Product_Catalog_&_Configuration/Products'));
+router.use('/Product-Details', require('./C_Product_Catalog_&_Configuration/Products_Details'));
 router.use('/Products-Variants', require('./C_Product_Catalog_&_Configuration/Products_Variants'));
 router.use('/Products-Attributes', require('./C_Product_Catalog_&_Configuration/Products_Attributes'));
 router.use('/Products-Attributes-Values', require('./C_Product_Catalog_&_Configuration/Products_Attributes_Values'));
