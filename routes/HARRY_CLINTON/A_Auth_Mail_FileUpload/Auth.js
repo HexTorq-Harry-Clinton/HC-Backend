@@ -7,6 +7,8 @@ const { hashPassword, comparePassword, generateToken, generateJwt } = require('.
 var E_Mail_OTP_Map = new Map();
 var Password_Reset_Map = new Map();
 
+const otpEmailKey = (value) => String(value || '').trim().toLowerCase();
+
 
 const E_MAIL_SERVICE = new EmailService();
 
@@ -254,10 +256,11 @@ router.post('/OTP-Login', async (req, res, next) => {
 
       console.log('User logged in successfully:', userRow.email_id);
       const OTP = Math.floor(1000 + Math.random() * 9000);
-      const E_MAIL = data.email_id;
+      const E_MAIL = String(data.email_id).trim();
+      const otpKey = otpEmailKey(E_MAIL);
 
       // Store OTP immediately with pending email status
-      E_Mail_OTP_Map.set(E_MAIL, {
+      E_Mail_OTP_Map.set(otpKey, {
         OTP: OTP,
         DATA: Data,
         emailSent: false,
@@ -268,18 +271,18 @@ router.post('/OTP-Login', async (req, res, next) => {
       E_MAIL_SERVICE.sendOTPEmail(E_MAIL, OTP)
         .then(mailRes => {
           console.log('OTP Email sent successfully:', mailRes.messageId);
-          const entry = E_Mail_OTP_Map.get(E_MAIL);
-          if (entry) {
-            entry.emailSent = true;
-            E_Mail_OTP_Map.set(E_MAIL, entry);
+           const entry = E_Mail_OTP_Map.get(otpKey);
+           if (entry) {
+             entry.emailSent = true;
+             E_Mail_OTP_Map.set(otpKey, entry);
           }
         })
         .catch(mailErr => {
           console.error('Error sending OTP Email:', mailErr);
-          const entry = E_Mail_OTP_Map.get(E_MAIL);
-          if (entry) {
-            entry.emailError = mailErr.message;
-            E_Mail_OTP_Map.set(E_MAIL, entry);
+           const entry = E_Mail_OTP_Map.get(otpKey);
+           if (entry) {
+             entry.emailError = mailErr.message;
+             E_Mail_OTP_Map.set(otpKey, entry);
           }
         });
 
@@ -333,7 +336,8 @@ router.post('/Verify-Login-OTP', async (req, res, next) => {
       });
     }
 
-    const storedEntry = E_Mail_OTP_Map.get(data.email_id);
+    const key = otpEmailKey(data.email_id);
+    const storedEntry = E_Mail_OTP_Map.get(key);
 
     if (!storedEntry) {
       out = {
@@ -348,7 +352,7 @@ router.post('/Verify-Login-OTP', async (req, res, next) => {
 
     // Check if email failed to send
     if (storedEntry.emailError) {
-      E_Mail_OTP_Map.delete(data.email_id);
+       E_Mail_OTP_Map.delete(key);
       out = {
         Status: '0',
         Message: 'Email failed to send: ' + storedEntry.emailError,
@@ -363,7 +367,7 @@ router.post('/Verify-Login-OTP', async (req, res, next) => {
     if (storedEntry.OTP.toString() === data.otp.toString()) {
 
       out = storedEntry.DATA;
-      E_Mail_OTP_Map.delete(data.email_id); // Invalidate OTP after successful verification
+       E_Mail_OTP_Map.delete(key); // Invalidate OTP after successful verification
       return res.json(out);
     } else {
       out = {
