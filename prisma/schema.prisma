@@ -1473,7 +1473,7 @@ model tbl_users {
   luu                          String?                        @db.VarChar(100)
   lcm                          DateTime?                      @db.DateTime
   tbl_customer_profiles        tbl_customer_profiles?
-  tbl_customer_measurements    tbl_customer_measurements?
+  tbl_customer_measurements    tbl_customer_measurements[]
   tbl_newsletter_subscriptions tbl_newsletter_subscriptions[]
   tbl_product_reviews          tbl_product_reviews[]
   tbl_review_responses         tbl_review_responses[]
@@ -1485,7 +1485,7 @@ model tbl_users {
 
 model tbl_customer_measurements {
   measurement_id        String    @id(map: "PK_tbl_customer_measurements") @default("newid()", map: "DF_tbl_customer_measurements_id") @db.UniqueIdentifier
-  user_id               String    @unique(map: "UX_tbl_customer_measurements_user") @db.VarChar(36)
+  user_id               String    @db.VarChar(36)
   guest_name            String?   @db.VarChar(255)
   product_name         String?   @db.VarChar(255)
   unit                  String    @default("inches") @db.VarChar(30)
@@ -1515,6 +1515,8 @@ model tbl_customer_measurements {
   luu                   String?   @db.VarChar(100)
   lcm                   DateTime? @db.DateTime
   tbl_users             tbl_users @relation(fields: [user_id], references: [user_id], onUpdate: NoAction, map: "FK_tbl_customer_measurements_user")
+
+  @@index([user_id], map: "IX_tbl_customer_measurements_user")
 }
 
 model tbl_variant_rating_summary {
