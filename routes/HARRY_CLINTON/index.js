@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { poolConnect } = require('../../config/db_harry_clinton');
+const { apiCache } = require('../../middlewares/api-cache.middleware');
+
+// Apply one cache/invalidation policy to every Harry Clinton API resource.
+router.use(apiCache);
+
+router.use('/Admin-Bulk-Delete', require('./AdminBulkDelete'));
 
 // Connect pool once when this module loads
 poolConnect

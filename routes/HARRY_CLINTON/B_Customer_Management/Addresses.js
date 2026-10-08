@@ -15,6 +15,10 @@ const FIELD_TYPES = {
   full_name: { type: sql.VarChar, maxLength: 255 },
   mobile_number: { type: sql.VarChar, maxLength: 50 },
   emailid: { type: sql.VarChar, maxLength: 255 },
+  address_label: { type: sql.VarChar, maxLength: 20 },
+  house_no_floor: { type: sql.VarChar, maxLength: 255 },
+  building_block: { type: sql.VarChar, maxLength: 255 },
+  area_name: { type: sql.VarChar, maxLength: 255 },
   house_street: { type: sql.VarChar, maxLength: 500 },
   city: { type: sql.VarChar, maxLength: 150 },
   state: { type: sql.VarChar, maxLength: 150 },
@@ -37,6 +41,10 @@ const INSERT_FIELDS = [
   'full_name',
   'mobile_number',
   'emailid',
+  'address_label',
+  'house_no_floor',
+  'building_block',
+  'area_name',
   'house_street',
   'city',
   'state',
@@ -50,6 +58,10 @@ const UPDATE_FIELDS = [
   'full_name',
   'mobile_number',
   'emailid',
+  'address_label',
+  'house_no_floor',
+  'building_block',
+  'area_name',
   'house_street',
   'city',
   'state',
@@ -175,14 +187,16 @@ router.post('/', async (req, res) => {
       !data.user_id ||
       !data.full_name ||
       !data.mobile_number ||
-      !data.house_street ||
+       !(data.house_no_floor || data.house_street) ||
+       !(data.building_block || data.house_street) ||
+       !(data.area_name || data.landmark) ||
       !data.city ||
       !data.state ||
       !data.pincode
     ) {
       return res.status(400).json({
         success: false,
-        message: 'Required fields missing'
+        message: 'House/floor, building/block, area, city, state and pincode are required'
       });
     }
 
