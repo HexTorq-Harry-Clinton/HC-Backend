@@ -884,6 +884,8 @@ model tbl_product_variants {
   sku                          String                         @unique(map: "ux_tbl_product_variants_sku", where: raw("([isdeleted]=(0))")) @db.VarChar(100)
   variant_name                 String?                        @db.VarChar(255)
   price                        Decimal?                       @db.Decimal(18, 2)
+  discount_type                String?                        @db.VarChar(20)
+  discount_value               Decimal?                       @db.Decimal(18, 2)
   stock_qty                    Int                            @default(0, map: "DF__tbl_produ__stock__52E34C9D")
   size_id                      String?                        @db.VarChar(36)
   cloth_type_id                String?                        @db.VarChar(36)

@@ -10,6 +10,8 @@ const FIELD_TYPES = {
   sku: { type: sql.VarChar, maxLength: 100 },
   variant_name: { type: sql.VarChar, maxLength: 255 },
   price: { type: sql.Decimal(18, 2) },
+  discount_type: { type: sql.VarChar, maxLength: 20 },
+  discount_value: { type: sql.Decimal(18, 2) },
   stock_qty: { type: sql.Int },
   size_id: { type: sql.VarChar, maxLength: 36 },
   cloth_type_id: { type: sql.VarChar, maxLength: 36 },
@@ -27,6 +29,8 @@ const INSERT_FIELDS = [
   'sku',
   'variant_name',
   'price',
+  'discount_type',
+  'discount_value',
   'stock_qty',
   'size_id',
   'cloth_type_id',
@@ -38,6 +42,8 @@ const UPDATE_FIELDS = [
   'sku',
   'variant_name',
   'price',
+  'discount_type',
+  'discount_value',
   'stock_qty',
   'size_id',
   'cloth_type_id',
@@ -48,6 +54,11 @@ const UPDATE_FIELDS = [
 
 const prepareInputValue = (field, value) => {
   if (value === null || value === undefined || value === '') return null;
+
+  if (field === 'discount_type') {
+    const v = String(value).trim().toLowerCase();
+    return ['none', 'amount', 'percentage'].includes(v) ? v : null;
+  }
 
   const t = FIELD_TYPES[field]?.type;
 
