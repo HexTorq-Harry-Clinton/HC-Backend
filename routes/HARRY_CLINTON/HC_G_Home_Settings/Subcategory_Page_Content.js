@@ -5,6 +5,7 @@ const { pool, poolConnect, sql } = require('../../../config/db_harry_clinton');
 
 const FIELDS = {
   subcategory_page_content_id: sql.VarChar(36), subcategory_slug: sql.VarChar(100), category_group: sql.VarChar(100),
+  menu_subcategory_id: sql.VarChar(36),
   hero_title: sql.VarChar(255), hero_subtitle: sql.VarChar(500), hero_video_url: sql.VarChar(1000),
   marquee_words_json: sql.VarChar(sql.MAX), left_image_url: sql.VarChar(1000), center_video_url: sql.VarChar(1000),
   right_image_url: sql.VarChar(1000), slider_images_json: sql.VarChar(sql.MAX), slider_image_1_url: sql.VarChar(1000), slider_image_2_url: sql.VarChar(1000), slider_image_3_url: sql.VarChar(1000), description_title: sql.VarChar(255),

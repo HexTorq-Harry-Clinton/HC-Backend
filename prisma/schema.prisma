@@ -1249,6 +1249,7 @@ model tbl_subcategory_page_content {
   subcategory_page_content_id String   @id(map: "pk_tbl_subcategory_page_content") @default("CONVERT([varchar](36),newid())", map: "df_tbl_subcategory_page_content_id") @db.VarChar(36)
   subcategory_slug            String   @unique(map: "ux_tbl_subcategory_page_content_slug", where: raw("([isdeleted]=(0))")) @db.VarChar(100)
   category_group              String?  @db.VarChar(100)
+  menu_subcategory_id         String?  @db.VarChar(36)
   hero_title                  String?  @db.VarChar(255)
   hero_subtitle               String?  @db.VarChar(500)
   hero_video_url              String?  @db.VarChar(1000)
