@@ -73,7 +73,17 @@ const UPDATE_FIELDS = [
   'luu'
 ];
 
-const VALID_SHIPMENT_STATUSES = ['created', 'shipped', 'in_transit', 'delivered', 'cancelled'];
+// These values are also used by the admin order workflow. Keep the operational
+// delivery stages here so the admin can record the full courier lifecycle.
+const VALID_SHIPMENT_STATUSES = [
+  'created',
+  'shipped',
+  'in_transit',
+  'out_for_delivery',
+  'delivered',
+  'returned',
+  'cancelled',
+];
 
 /* =========================================
    INPUT PREPARATION

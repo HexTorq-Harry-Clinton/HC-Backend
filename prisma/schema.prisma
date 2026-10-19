@@ -626,6 +626,7 @@ model tbl_order_items {
   tbl_products         tbl_products          @relation(fields: [product_id], references: [product_id], onUpdate: NoAction, map: "fk_tbl_order_items_product")
   tbl_product_variants tbl_product_variants? @relation(fields: [product_variant_id], references: [product_variant_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_tbl_order_items_variant")
   tbl_product_reviews  tbl_product_reviews[]
+  tbl_returns          tbl_returns[]
 
   @@index([order_id], map: "ix_tbl_order_items_order", where: raw("([isdeleted]=(0))"))
   @@index([product_id], map: "ix_tbl_order_items_product", where: raw("([isdeleted]=(0))"))
@@ -1056,6 +1057,7 @@ model tbl_refunds {
 model tbl_returns {
   return_id          String        @id(map: "PK__tbl_retu__35C234739C6BA681") @default("CONVERT([varchar](36),newid())", map: "DF__tbl_retur__retur__49E3F248") @db.VarChar(36)
   order_id           String        @db.VarChar(36)
+  order_item_id      String?       @db.VarChar(36)
   user_id            String        @db.VarChar(36)
   return_type        String        @db.VarChar(50)
   return_status      String        @default("requested", map: "DF__tbl_retur__retur__4AD81681") @db.VarChar(50)
@@ -1077,11 +1079,13 @@ model tbl_returns {
   lcm                DateTime?     @db.DateTime
   tbl_refunds        tbl_refunds[]
   tbl_orders         tbl_orders    @relation(fields: [order_id], references: [order_id], onUpdate: NoAction, map: "fk_tbl_returns_order")
+  tbl_order_items     tbl_order_items? @relation(fields: [order_item_id], references: [order_item_id], onUpdate: NoAction, map: "fk_tbl_returns_order_item")
 
   @@index([order_id], map: "ix_tbl_returns_order", where: raw("([isdeleted]=(0))"))
   @@index([requested_date], map: "ix_tbl_returns_requested_date", where: raw("([isdeleted]=(0))"))
   @@index([return_status], map: "ix_tbl_returns_status", where: raw("([isdeleted]=(0))"))
   @@index([user_id], map: "ix_tbl_returns_user", where: raw("([isdeleted]=(0))"))
+  @@index([order_item_id], map: "ix_tbl_returns_order_item", where: raw("([isdeleted]=(0))"))
 }
 
 model tbl_review_media {

@@ -10,6 +10,7 @@ const { pool, poolConnect, sql } = require('../../../config/db_harry_clinton');
 const FIELD_TYPES = {
   return_id: { type: sql.VarChar, maxLength: 36 },
   order_id: { type: sql.VarChar, maxLength: 36 },
+  order_item_id: { type: sql.VarChar, maxLength: 36 },
   user_id: { type: sql.VarChar, maxLength: 36 },
 
   return_type: { type: sql.VarChar, maxLength: 50 },
@@ -38,6 +39,7 @@ const FIELD_TYPES = {
 
 const INSERT_FIELDS = [
   'order_id',
+  'order_item_id',
   'user_id',
   'return_type',
   'return_reason',
@@ -53,6 +55,7 @@ const INSERT_FIELDS = [
 ];
 
 const UPDATE_FIELDS = [
+  'order_item_id',
   'return_type',
   'return_reason',
   'return_reason_code',
