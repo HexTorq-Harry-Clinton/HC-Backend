@@ -34,4 +34,13 @@ const optionalAuth = (req, res, next) => {
   next();
 };
 
-module.exports = { requireAuth, optionalAuth };
+const requireAdmin = (req, res, next) => {
+  return requireAuth(req, res, () => {
+    if (!String(req.user?.role_code || '').toLowerCase().includes('admin')) {
+      return res.status(403).json({ success: false, message: 'Administrator access required.' });
+    }
+    return next();
+  });
+};
+
+module.exports = { requireAuth, requireAdmin, optionalAuth };

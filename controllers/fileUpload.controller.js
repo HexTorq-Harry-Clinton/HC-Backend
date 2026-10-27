@@ -16,7 +16,7 @@ function createFileUploader({ baseDir, virtualBase }) {
       console.log("BODY", req.body)
       const raw = (req.body.path || '').trim();
       console.log("RAW PATH", raw)
-      const subdir = path.normalize(raw).replace(/^(\.\.(\/|\\|$))+/, '');
+      const subdir = path.normalize(raw).replace(/^(\.\.(\/|\\|$))+/, '').replace(/^([/\\])+/, '');
       console.log("SUBDIR", subdir)
       const uploadDir = path.join(baseDir, subdir);
       console.log("UPLOAD DIR", uploadDir)
@@ -36,14 +36,26 @@ function createFileUploader({ baseDir, virtualBase }) {
         .format(new Date())
         .replace(/[-: ]/g, '');
 
-      cb(null, `${ts}_${file.originalname}`);
+      const safeName = path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, '_');
+      cb(null, `${ts}_${safeName}`);
     }
   });
 
   // 2) Tell multer to accept two fields: 
   //    • "path" as text, maxCount:1 
   //    • "file" as file,    maxCount:1
-  const upload = multer({ storage }).fields([
+  const upload = multer({
+    storage,
+    limits: { fileSize: 100 * 1024 * 1024, files: 1 },
+    fileFilter: (req, file, cb) => {
+      const allowedMime = /^(image\/(jpeg|png|gif|webp|avif)|video\/(mp4|webm|quicktime|x-msvideo|x-matroska))$/i;
+      const allowedExt = /\.(jpe?g|png|gif|webp|avif|mp4|webm|mov|avi|mkv)$/i;
+      if (!allowedMime.test(file.mimetype) || !allowedExt.test(file.originalname)) {
+        return cb(new Error('Only supported image and video files are allowed.'));
+      }
+      return cb(null, true);
+    },
+  }).fields([
     { name: 'path', maxCount: 1 },
     { name: 'file', maxCount: 1 }
   ]);
