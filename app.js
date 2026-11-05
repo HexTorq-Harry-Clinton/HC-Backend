@@ -9,6 +9,11 @@ const morgan = require("morgan");
 
 const app = express();
 
+// API clients must receive the JSON body on every successful GET. Browser
+// conditional requests can otherwise turn a cached JSON response into 304 with
+// an empty fetch body, leaving admin tables stuck at zero/loading.
+app.disable("etag");
+
 // PIPELINE MODE: allow all origins (Vercel previews, prod domain, tooling).
 // `origin: true` reflects the request origin, which keeps `credentials: true`
 // valid (a literal "*" would break credentialed requests).
